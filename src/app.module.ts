@@ -4,6 +4,7 @@ import { InsurerModule } from './modules/insurer/insurer.module.js';
 import { LenderModule } from './modules/lender/lender.module.js';
 import { ObjectivityModule } from './modules/objectivity/objectivity.module.js';
 import { OrchestratorModule } from './modules/orchestrator/orchestrator.module.js';
+import { SharedModule } from './modules/shared/shared.module.js';
 import { SystemHealthCheck } from './health/system.health.js';
 
 /**
@@ -30,6 +31,7 @@ import { SystemHealthCheck } from './health/system.health.js';
   description: 'Root application module',
   imports: [
     ConfigModule.forRoot(),
+    SharedModule,
     HospitalModule,
     InsurerModule,
     LenderModule,

@@ -2,47 +2,163 @@
   "version": "1.0.0",
   "widgets": [
     {
-      "uri": "/calculator-result",
-      "name": "Calculator Result",
-      "description": "Displays the result of a calculation with operation details",
+      "uri": "/case-summary",
+      "name": "Case Summary",
+      "description": "Full reconciled case view — shows claim status, financial gap, objectivity flags, and latest timeline event for any submitted Care Mediator case.",
+      "tools": ["reconcile_case_by_id", "get_live_case_status"],
       "examples": [
         {
-          "name": "Addition Example",
-          "description": "Shows the result of adding 5 + 3",
+          "name": "Approved case (Meera Nair)",
+          "description": "Clean case with full approval and no gap",
           "data": {
-            "operation": "add",
-            "a": 5,
-            "b": 3,
-            "result": 8,
-            "expression": "5 + 3 = 8"
+            "caseId": "clean-case",
+            "patientName": "Meera Nair",
+            "hospitalName": "Sunrise General Hospital",
+            "procedure": "Laparoscopic Appendectomy",
+            "claimStatus": "approved",
+            "hospitalEstimate": 185000,
+            "insurerApproved": 185000,
+            "coverageGap": 0,
+            "financingNeeded": false,
+            "isConsistent": true,
+            "flags": [],
+            "objectivitySummary": "Submission is consistent across hospital records, diagnosis codes, and policy terms. No discrepancies found.",
+            "submittedAt": "2026-07-18T09:15:00.000Z",
+            "latestTimelineEvent": {
+              "timestamp": "2026-07-18T13:10:00.000Z",
+              "actor": "system",
+              "event": "Patient notified of approval."
+            }
           }
         },
         {
-          "name": "Multiplication Example",
-          "description": "Shows the result of multiplying 6 × 7",
+          "name": "Partial approval case (Arjun Verma)",
+          "description": "Gotcha case — partial approval with a ₹1,60,000 gap and objectivity flags",
           "data": {
-            "operation": "multiply",
-            "a": 6,
-            "b": 7,
-            "result": 42,
-            "expression": "6 × 7 = 42"
-          }
-        },
-        {
-          "name": "Division Example",
-          "description": "Shows the result of dividing 20 ÷ 4",
-          "data": {
-            "operation": "divide",
-            "a": 20,
-            "b": 4,
-            "result": 5,
-            "expression": "20 ÷ 4 = 5"
+            "caseId": "gotcha-case",
+            "patientName": "Arjun Verma",
+            "hospitalName": "Lakeside Multispecialty Hospital",
+            "procedure": "Arthroscopic Knee Surgery",
+            "claimStatus": "partial",
+            "denialReason": "Partial approval — waiting period not fully cleared and one procedure code mismatch.",
+            "hospitalEstimate": 420000,
+            "insurerApproved": 260000,
+            "coverageGap": 160000,
+            "financingNeeded": true,
+            "isConsistent": false,
+            "flags": [
+              "Treatment code does not match diagnosis entered on the intake form.",
+              "Hospital estimate is 61% higher than the median cost for this procedure at in-network facilities."
+            ],
+            "objectivitySummary": "Submission has inconsistencies that were flagged before reaching the insurer.",
+            "submittedAt": "2026-07-20T07:30:00.000Z",
+            "latestTimelineEvent": {
+              "timestamp": "2026-07-20T12:26:00.000Z",
+              "actor": "system",
+              "event": "One financing offer flagged for predatory APR."
+            }
           }
         }
       ],
-      "tags": ["calculator", "math", "result"]
+      "tags": ["case", "claim", "status", "summary", "care-mediator"]
+    },
+    {
+      "uri": "/loan-offers",
+      "name": "Loan Offers",
+      "description": "Financing options for a patient's coverage gap, sorted by true effective annual rate. Clearly flags predatory or high-APR lenders so patients can make an informed decision.",
+      "tools": ["get_loan_offers", "reconcile_case", "reconcile_case_by_id"],
+      "examples": [
+        {
+          "name": "Two offers — one flagged",
+          "description": "Clean recommended offer from Suraksha vs a predatory QuickCash offer",
+          "data": {
+            "offers": [
+              {
+                "offerId": "LND-002",
+                "lenderName": "Suraksha Health Finance",
+                "principal": 160000,
+                "tenureMonths": 24,
+                "flatInterestRate": 0.075,
+                "processingFeePct": 0.01,
+                "isPredatory": false,
+                "totalRepayable": 188800,
+                "effectiveAnnualRate": 0.09
+              },
+              {
+                "offerId": "LND-001",
+                "lenderName": "QuickCash Medical Credit",
+                "principal": 160000,
+                "tenureMonths": 12,
+                "flatInterestRate": 0.24,
+                "processingFeePct": 0.025,
+                "isPredatory": true,
+                "flagReason": "APR is significantly above market average for medical financing and includes a prepayment penalty.",
+                "totalRepayable": 202400,
+                "effectiveAnnualRate": 0.265
+              }
+            ],
+            "cheapestOfferId": "LND-002",
+            "flaggedPredatory": ["LND-001"]
+          }
+        },
+        {
+          "name": "No financing needed",
+          "description": "Full approval with zero gap",
+          "data": {
+            "offers": [],
+            "cheapestOfferId": null,
+            "flaggedPredatory": []
+          }
+        }
+      ],
+      "tags": ["loan", "financing", "gap", "lender", "care-mediator"]
+    },
+    {
+      "uri": "/objectivity-report",
+      "name": "Objectivity Report",
+      "description": "Neutral third-party check of a hospital billing submission — shows consistency with CGHS benchmarks and insurer claim record, and highlights any inconsistencies before the insurer reviews.",
+      "tools": ["build_objective_case_report", "reconcile_case", "reconcile_case_by_id"],
+      "examples": [
+        {
+          "name": "Clean report — no issues",
+          "description": "All fields consistent with CGHS rates and insurer claim",
+          "data": {
+            "patientId": "PAT-01",
+            "procedureCode": "CGHS-CARD-001",
+            "cghsBenchmark": 65000,
+            "hospitalBilledAmount": 68000,
+            "insurerClaim": {
+              "claimId": "CLM-1001",
+              "cashlessStatus": "approved",
+              "approvedAmount": 68000
+            },
+            "isConsistent": true,
+            "inconsistencies": []
+          }
+        },
+        {
+          "name": "Flagged report — two issues",
+          "description": "Billed amount far above CGHS rate; procedure code mismatch with insurer claim",
+          "data": {
+            "patientId": "PAT-02",
+            "procedureCode": "CGHS-ORTH-014",
+            "cghsBenchmark": 120000,
+            "hospitalBilledAmount": 420000,
+            "insurerClaim": {
+              "claimId": "CLM-1002",
+              "cashlessStatus": "denied",
+              "approvedAmount": 0
+            },
+            "isConsistent": false,
+            "inconsistencies": [
+              "Billed amount (₹4,20,000) is more than 50% over the CGHS rate (₹1,20,000)",
+              "Insurer claim lists procedure CGHS-CARD-001, hospital entry lists CGHS-ORTH-014"
+            ]
+          }
+        }
+      ],
+      "tags": ["objectivity", "audit", "cghs", "flags", "care-mediator"]
     }
   ],
-  "generatedAt": "2025-01-01T00:00:00.000Z"
+  "generatedAt": "2026-07-26T00:00:00.000Z"
 }
-

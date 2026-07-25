@@ -1,9 +1,13 @@
 /**
- * Calculator MCP Server
- * 
- * Main entry point for the MCP server.
- * Uses the @McpApp decorator pattern for clean, NestJS-style architecture.
- * 
+ * Care Mediator MCP Server
+ *
+ * Exposes five agent modules as MCP tools:
+ *   - Hospital  : CGHS rate lookups, procedure listing
+ *   - Insurer   : claim status, network-hospital check, decision submission
+ *   - Lender    : loan offers with true effective-annual-rate comparison
+ *   - Objectivity: cross-checks hospital billing vs CGHS benchmark + insurer claim
+ *   - Orchestrator: single reconcile_case / reconcile_case_by_id entry point
+ *
  * Transport Configuration:
  * - Development (NODE_ENV=development): STDIO only
  * - Production (NODE_ENV=production): Dual transport (STDIO + HTTP SSE)
