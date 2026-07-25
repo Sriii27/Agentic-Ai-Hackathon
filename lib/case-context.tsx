@@ -9,7 +9,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import type { CaseData, ClaimStatus, TimelineEvent, DecisionInput } from './types';
+import type { CaseData, TimelineEvent, DecisionInput } from './types';
 import { getCase, listCases, submitDecision as apiSubmitDecision } from './api';
 
 const STORAGE_KEY = 'care-mediator:dev-case-id';
@@ -59,23 +59,37 @@ export function CaseProvider({ children }: { children: React.ReactNode }) {
     try {
       const cases = await listCases();
       setAvailableCaseIds(cases.map((c) => c.caseId));
-    } catch (err) {
+    } catch {
       setAvailableCaseIds(['clean-case', 'gotcha-case']);
     }
   }, []);
 
-  // Load the list of available case IDs from the backend on mount
+  // Load the list of available case IDs from the backend on mount. Inlined
+  // (rather than calling the `refreshCases` callback) so every setState
+  // happens inside a .then()/.catch() continuation, not synchronously at
+  // the top of the effect.
   useEffect(() => {
-    refreshCases();
-  }, [refreshCases]);
+    let cancelled = false;
+    listCases()
+      .then((cases) => {
+        if (!cancelled) setAvailableCaseIds(cases.map((c) => c.caseId));
+      })
+      .catch(() => {
+        if (!cancelled) setAvailableCaseIds(['clean-case', 'gotcha-case']);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
-  // Choose an initial case once we know which IDs exist
-  useEffect(() => {
-    if (caseId || availableCaseIds.length === 0) return;
+  // Choose an initial case once we know which IDs exist — adjusting state
+  // during render (React's recommended alternative to an effect here)
+  // rather than calling setState synchronously inside a useEffect.
+  if (!caseId && availableCaseIds.length > 0) {
     const stored = readStoredCaseId();
     const first = availableCaseIds.includes(stored) ? stored : availableCaseIds[0];
     setCaseIdState(first);
-  }, [availableCaseIds, caseId]);
+  }
 
   const setCaseId = useCallback((id: string) => {
     setCaseIdState(id);
