@@ -1,0 +1,218 @@
+@import "tailwindcss";
+
+:root {
+  /* Care Mediator — "verified case file" tokens */
+  --ink: #16324f;
+  --slate: #5c6b73;
+  --verified: #1b7a72;
+  --amber: #b8842a;
+  --paper: #f5f7f8;
+  --hairline: #d8dee2;
+
+  /* Derived tints — needed for surfaces/washes, not in the original 6 */
+  --verified-tint: #e5f1ef;
+  --amber-tint: #f6eee0;
+  --ink-tint: #eaeef1;
+  --paper-raised: #ffffff;
+
+  --background: var(--paper);
+  --foreground: var(--ink);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-ink: var(--ink);
+  --color-slate: var(--slate);
+  --color-verified: var(--verified);
+  --color-amber: var(--amber);
+  --color-paper: var(--paper);
+  --color-hairline: var(--hairline);
+  --color-verified-tint: var(--verified-tint);
+  --color-amber-tint: var(--amber-tint);
+  --color-ink-tint: var(--ink-tint);
+  --color-paper-raised: var(--paper-raised);
+
+  --font-sans: var(--font-plex-sans);
+  --font-mono: var(--font-plex-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  line-height: 1.5;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  color: var(--ink);
+  font-family: var(--font-sans);
+  line-height: 1.25;
+}
+
+p,
+dt,
+dd,
+label,
+li,
+span,
+input,
+select,
+textarea,
+button {
+  font-family: var(--font-sans);
+}
+
+/* Strip browser default outlines so we can provide our own :focus-visible ring.
+   This is intentional — the :focus-visible rules below restore visible focus
+   for keyboard users, while click-activated interactions remain outline-free.
+   Do NOT remove this block without restoring an equivalent focus indicator. */
+a,
+button,
+input,
+select,
+textarea,
+summary {
+  outline: none;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.cm-field {
+  margin-top: 8px;
+  display: block;
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid var(--hairline);
+  background: var(--paper-raised);
+  color: var(--ink);
+  padding: 12px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.cm-field::placeholder {
+  color: color-mix(in srgb, var(--slate) 80%, transparent);
+}
+
+.cm-field:hover {
+  border-color: color-mix(in srgb, var(--slate) 65%, var(--hairline));
+}
+
+.cm-field:focus-visible {
+  border-color: var(--ink);
+  box-shadow: 0 0 0 1px var(--ink);
+}
+
+.cm-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid var(--hairline);
+  background: var(--paper-raised);
+  color: var(--ink);
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.cm-button:hover {
+  background: var(--ink-tint);
+}
+
+.cm-button:active {
+  background: color-mix(in srgb, var(--ink-tint) 80%, var(--hairline));
+}
+
+.cm-button-primary {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.cm-button-primary:hover {
+  background: color-mix(in srgb, var(--ink) 92%, black);
+}
+
+.cm-button-primary:active {
+  background: color-mix(in srgb, var(--ink) 84%, black);
+}
+
+.cm-button-amber {
+  border-color: var(--amber);
+  background: var(--amber-tint);
+  color: var(--amber);
+}
+
+.cm-button-amber:hover {
+  background: color-mix(in srgb, var(--amber-tint) 85%, white);
+}
+
+.cm-card-note {
+  border-radius: 8px;
+  border: 1px solid var(--hairline);
+  background: color-mix(in srgb, var(--paper) 78%, white);
+  padding: 16px;
+}
+
+@keyframes route-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-route-in {
+  animation: route-in 220ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #ffffff;
+  }
+  /* Force the three-rail grid to a single readable column — print page
+     width doesn't reliably match the lg: breakpoint math from screen. */
+  .case-file-grid {
+    display: block !important;
+    max-width: 100% !important;
+  }
+  .case-file-main {
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+  .print-header {
+    display: block !important;
+  }
+}
