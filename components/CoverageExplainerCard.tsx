@@ -5,9 +5,9 @@ import { formatCurrency } from '@/lib/utils';
 import type { CoverageExplainer, NetworkStatus } from '@/lib/types';
 
 const NETWORK_LABEL: Record<NetworkStatus, string> = {
-  'in-network': 'In-network',
-  'out-of-network': 'Out-of-network',
-  unknown: 'Network status unknown',
+  'in-network': 'In-Network',
+  'out-of-network': 'Out-of-Network',
+  unknown: 'Network Unknown',
 };
 
 const NETWORK_TONE: Record<NetworkStatus, BadgeTone> = {
@@ -24,68 +24,72 @@ export function CoverageExplainerCard({
   const { covered, coverageLimit, waitingPeriodCleared, exclusionsApplicable, networkStatus } =
     coverageExplainer;
 
-  const summary = covered
-    ? `This procedure is covered under the patient's policy, up to ${formatCurrency(coverageLimit)}.`
-    : "This procedure is not covered under the patient's current policy.";
-
   return (
     <Card>
       <CardHeader
-        title="Coverage Explainer"
-        subtitle="Plain-language summary of what's covered"
-        action={<Badge tone={NETWORK_TONE[networkStatus]} className="whitespace-nowrap">{NETWORK_LABEL[networkStatus]}</Badge>}
+        title="Policy & Coverage"
+        action={<Badge tone={NETWORK_TONE[networkStatus]} className="py-0.5 px-2.5 text-xs">{NETWORK_LABEL[networkStatus]}</Badge>}
       />
       <CardBody className="space-y-4">
-        <p className="text-sm text-slate">{summary}</p>
+        {/* Coverage Callout */}
+        <div className={`flex items-center gap-3 rounded-xl border p-3.5 ${
+          covered ? 'border-teal-200 bg-teal-50/50 text-teal-900' : 'border-amber-200 bg-amber-50/50 text-amber-900'
+        }`}>
+          <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
+            covered ? 'bg-teal-600 text-white' : 'bg-amber-600 text-white'
+          }`}>
+            {covered ? '✓' : '!'}
+          </span>
+          <p className="text-xs font-semibold">
+            {covered
+              ? `Covered up to ${formatCurrency(coverageLimit)} under policy terms.`
+              : 'Procedure not covered under current policy.'}
+          </p>
+        </div>
 
-        {!waitingPeriodCleared && (
-          <div className="rounded-lg border border-amber/30 bg-amber-tint px-4 py-4">
-            <p className="text-sm font-medium text-amber">
-              Waiting period not yet cleared
+        {/* Details Grid */}
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="rounded-xl border border-slate-200/80 bg-slate-50/50 p-3.5">
+            <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+              Waiting Period
             </p>
-            <p className="mt-2 text-sm text-amber/90">
-              Part of this claim relates to a condition still inside its policy
-              waiting period, which limits what can be approved right now.
+            <p className="mt-1 text-xs font-semibold text-slate-800">
+              {waitingPeriodCleared ? 'Cleared' : 'Applies to this claim'}
             </p>
           </div>
-        )}
-        {waitingPeriodCleared && (
-          <p className="flex items-center gap-1.5 text-sm text-verified">
-            <span className="inline-block h-1.5 w-1.5 rounded-full bg-verified" />
-            Waiting period cleared
-          </p>
-        )}
 
-        <div>
-          <p className="text-xs font-medium uppercase tracking-[0.08em] text-slate">
-            Coverage limit
-          </p>
-          <p className="mt-2 font-mono text-lg font-semibold text-ink">
-            {formatCurrency(coverageLimit)}
-          </p>
-          <div className="mt-2">
-            <VerificationStamp status="verified" verb="Verified" label="policy coverage table" compact />
+          <div className="rounded-xl border border-slate-200/80 bg-slate-50/50 p-3.5">
+            <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+              Coverage Limit
+            </p>
+            <p className="mt-1 font-mono text-base font-bold text-slate-900">
+              {formatCurrency(coverageLimit)}
+            </p>
+            <div className="mt-1">
+              <VerificationStamp status="verified" verb="Verified" label="policy schedule" compact />
+            </div>
           </div>
         </div>
 
+        {/* Exclusions */}
         <div>
-          <div className="flex items-center justify-between gap-3">
-            <p className="text-xs font-medium uppercase tracking-[0.08em] text-slate">
-              Exclusions that apply to this case
+          <div className="flex items-center justify-between gap-2 mb-1.5">
+            <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+              Policy Exclusions
             </p>
-            <VerificationStamp status="verified" verb="Cross-checked" label="policy terms" compact />
+            <VerificationStamp status="verified" verb="Cross-checked" label="terms" compact />
           </div>
           {exclusionsApplicable.length === 0 ? (
-            <p className="mt-1.5 text-sm text-slate">None</p>
+            <p className="text-xs text-slate-500">None applicable.</p>
           ) : (
-            <ul className="mt-1.5 space-y-1.5">
+            <ul className="space-y-1.5">
               {exclusionsApplicable.map((exclusion) => (
                 <li
                   key={exclusion}
-                  className="flex items-start gap-2 text-sm text-slate"
+                  className="flex items-center gap-2 rounded-lg border border-amber-200/70 bg-amber-50/60 px-3 py-2 text-xs text-amber-900"
                 >
-                  <span className="mt-1.5 inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-amber" />
-                  {exclusion}
+                  <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+                  <span className="font-medium">{exclusion}</span>
                 </li>
               ))}
             </ul>

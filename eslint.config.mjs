@@ -20,6 +20,8 @@ const eslintConfig = defineConfig([
     // not wired into this root project.
     "frontend/**",
     "src/**",
+    // teammate's NitroStack "Pizzaz" template project — own package.json/tsconfig.
+    "my_project_hackathon/**",
   ]),
 ]);
 

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { CaseProvider } from "@/lib/case-context";
+import { AuthProvider } from "@/lib/auth-context";
 import { DevCaseSwitcher } from "@/components/DevCaseSwitcher";
 import { RouteFade } from "@/components/RouteFade";
 import { NeedHelpFooter } from "@/components/NeedHelpFooter";
@@ -34,11 +35,13 @@ export default function RootLayout({
       className={`${plexSans.variable} ${plexMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <CaseProvider>
-          <RouteFade>{children}</RouteFade>
-          <NeedHelpFooter />
-          <DevCaseSwitcher />
-        </CaseProvider>
+        <AuthProvider>
+          <CaseProvider>
+            <RouteFade>{children}</RouteFade>
+            <NeedHelpFooter />
+            <DevCaseSwitcher />
+          </CaseProvider>
+        </AuthProvider>
       </body>
     </html>
   );

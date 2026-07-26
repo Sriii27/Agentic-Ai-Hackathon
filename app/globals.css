@@ -1,18 +1,20 @@
 @import "tailwindcss";
 
 :root {
-  /* Care Mediator — "verified case file" tokens */
-  --ink: #16324f;
-  --slate: #5c6b73;
-  --verified: #1b7a72;
-  --amber: #b8842a;
-  --paper: #f5f7f8;
-  --hairline: #d8dee2;
+  /* Care Mediator — Modern, crisp, accessible color tokens */
+  --ink: #0f172a;
+  --slate: #475569;
+  --verified: #0d9488;
+  --amber: #d97706;
+  --paper: #f8fafc;
+  --hairline: #e2e8f0;
 
-  /* Derived tints — needed for surfaces/washes, not in the original 6 */
-  --verified-tint: #e5f1ef;
-  --amber-tint: #f6eee0;
-  --ink-tint: #eaeef1;
+  /* Derived Washes and Surfaces */
+  --verified-tint: #f0fdf4;
+  --verified-border: #bbf7d0;
+  --amber-tint: #fffbeb;
+  --amber-border: #fde68a;
+  --ink-tint: #f1f5f9;
   --paper-raised: #ffffff;
 
   --background: var(--paper);
@@ -30,7 +32,9 @@
   --color-paper: var(--paper);
   --color-hairline: var(--hairline);
   --color-verified-tint: var(--verified-tint);
+  --color-verified-border: var(--verified-border);
   --color-amber-tint: var(--amber-tint);
+  --color-amber-border: var(--amber-border);
   --color-ink-tint: var(--ink-tint);
   --color-paper-raised: var(--paper-raised);
 
@@ -43,6 +47,7 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans);
   line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
 }
 
 h1,
@@ -52,6 +57,7 @@ h4 {
   color: var(--ink);
   font-family: var(--font-sans);
   line-height: 1.25;
+  letter-spacing: -0.01em;
 }
 
 p,
@@ -67,10 +73,7 @@ button {
   font-family: var(--font-sans);
 }
 
-/* Strip browser default outlines so we can provide our own :focus-visible ring.
-   This is intentional — the :focus-visible rules below restore visible focus
-   for keyboard users, while click-activated interactions remain outline-free.
-   Do NOT remove this block without restoring an equivalent focus indicator. */
+/* Accessibility & Focus Rings */
 a,
 button,
 input,
@@ -86,41 +89,45 @@ input:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
 summary:focus-visible {
-  outline: 2px solid var(--ink);
+  outline: 2px solid var(--verified);
   outline-offset: 2px;
 }
 
+/* Base Form Fields */
 .cm-field {
-  margin-top: 8px;
+  margin-top: 6px;
   display: block;
   width: 100%;
-  border-radius: 8px;
+  border-radius: 10px;
   border: 1px solid var(--hairline);
   background: var(--paper-raised);
   color: var(--ink);
-  padding: 12px;
+  padding: 10px 14px;
   font-size: 14px;
-  line-height: 1.4;
+  line-height: 1.5;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .cm-field::placeholder {
-  color: color-mix(in srgb, var(--slate) 80%, transparent);
+  color: #94a3b8;
 }
 
 .cm-field:hover {
-  border-color: color-mix(in srgb, var(--slate) 65%, var(--hairline));
+  border-color: #cbd5e1;
 }
 
 .cm-field:focus-visible {
-  border-color: var(--ink);
-  box-shadow: 0 0 0 1px var(--ink);
+  border-color: var(--verified);
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
 }
 
+/* Button Component Styles */
 .cm-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
+  gap: 8px;
+  border-radius: 10px;
   border: 1px solid var(--hairline);
   background: var(--paper-raised);
   color: var(--ink);
@@ -128,51 +135,72 @@ summary:focus-visible {
   font-size: 14px;
   font-weight: 600;
   line-height: 1.25;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 .cm-button:hover {
   background: var(--ink-tint);
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
 }
 
 .cm-button:active {
-  background: color-mix(in srgb, var(--ink-tint) 80%, var(--hairline));
+  transform: translateY(0);
+  background: #e2e8f0;
 }
 
 .cm-button-primary {
   border-color: var(--ink);
   background: var(--ink);
-  color: var(--paper);
+  color: #ffffff;
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.15);
 }
 
 .cm-button-primary:hover {
-  background: color-mix(in srgb, var(--ink) 92%, black);
+  background: #1e293b;
+  border-color: #1e293b;
+  color: #ffffff;
 }
 
-.cm-button-primary:active {
-  background: color-mix(in srgb, var(--ink) 84%, black);
+.cm-button-verified {
+  border-color: var(--verified);
+  background: var(--verified);
+  color: #ffffff;
+  box-shadow: 0 2px 4px rgba(13, 148, 136, 0.2);
+}
+
+.cm-button-verified:hover {
+  background: #0f766e;
+  border-color: #0f766e;
+  color: #ffffff;
 }
 
 .cm-button-amber {
-  border-color: var(--amber);
+  border-color: var(--amber-border);
   background: var(--amber-tint);
   color: var(--amber);
 }
 
 .cm-button-amber:hover {
-  background: color-mix(in srgb, var(--amber-tint) 85%, white);
+  background: #fef3c7;
+  border-color: #fcd34d;
 }
 
 .cm-card-note {
-  border-radius: 8px;
+  border-radius: 12px;
   border: 1px solid var(--hairline);
-  background: color-mix(in srgb, var(--paper) 78%, white);
-  padding: 16px;
+  background: #ffffff;
+  padding: 18px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
 }
 
+/* Keyframes and Animations */
 @keyframes route-in {
   from {
     opacity: 0;
-    transform: translateY(4px);
+    transform: translateY(6px);
   }
   to {
     opacity: 1;
@@ -181,7 +209,20 @@ summary:focus-visible {
 }
 
 .animate-route-in {
-  animation: route-in 220ms ease-out;
+  animation: route-in 200ms ease-out;
+}
+
+@keyframes pulse-subtle {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -202,8 +243,6 @@ summary:focus-visible {
   body {
     background: #ffffff;
   }
-  /* Force the three-rail grid to a single readable column — print page
-     width doesn't reliably match the lg: breakpoint math from screen. */
   .case-file-grid {
     display: block !important;
     max-width: 100% !important;

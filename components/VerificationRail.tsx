@@ -9,18 +9,17 @@ export type VerificationRailItem = {
 
 export function VerificationRail({ items }: { items: VerificationRailItem[] }) {
   return (
-    <div className="rounded-lg border border-hairline bg-paper-raised p-4">
-      <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate">
-        Verification
-      </p>
-      <p className="mt-1 text-xs text-slate/80">
-        What&apos;s been checked against a real source
-      </p>
+    <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-xs">
+      <div className="border-b border-slate-100 pb-2 mb-3">
+        <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+          Source Verification
+        </h2>
+      </div>
 
-      <ul className="mt-4 space-y-3">
+      <ul className="space-y-2">
         {items.map((item) => (
-          <li key={item.context} className="space-y-1">
-            <p className="text-sm text-slate">{item.context}</p>
+          <li key={item.context} className="rounded-xl border border-slate-100 bg-slate-50/60 p-2.5">
+            <p className="text-xs font-bold text-slate-800 mb-1">{item.context}</p>
             <VerificationStamp
               status={item.status}
               label={item.label}

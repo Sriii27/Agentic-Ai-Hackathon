@@ -1,5 +1,8 @@
-import type { ReactNode } from 'react';
+'use client';
+
+import { useState, type ReactNode } from 'react';
 import { AppHeader } from './AppHeader';
+import { Sidebar } from './Sidebar';
 import type { BadgeTone } from './ui/Badge';
 
 export function CaseFileShell({
@@ -20,25 +23,83 @@ export function CaseFileShell({
   right?: ReactNode;
   children: ReactNode;
 }) {
+  const [activeTab, setActiveTab] = useState<'main' | 'timeline' | 'verification'>('main');
+
   return (
-    <div className="flex min-h-screen flex-col bg-paper">
-      <AppHeader role={role} tone={roleTone} />
-      {stepper}
-      {notification}
-      <main className="case-file-main mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 sm:py-8">
-        <p className="print-header mb-6 hidden font-mono text-xs uppercase tracking-[0.08em] text-slate">
-          Care Mediator — Case Summary — {role} view
-        </p>
-        <div className="case-file-grid grid grid-cols-1 gap-6 lg:grid-cols-[220px_minmax(0,1fr)_280px]">
-          <aside className="no-print lg:sticky lg:top-6 lg:self-start">
-            {timeline}
-          </aside>
-          <div className="min-w-0 space-y-6">{children}</div>
-          <aside className="no-print space-y-6 lg:sticky lg:top-6 lg:self-start">
-            {right}
-          </aside>
+    <div className="flex min-h-screen bg-slate-50/70">
+      {/* Sidebar Navigation */}
+      <Sidebar className="hidden lg:flex" />
+
+      {/* Main Container */}
+      <div className="flex flex-1 flex-col min-w-0">
+        <AppHeader role={role} tone={roleTone} />
+        {stepper}
+        {notification}
+
+        {/* Mobile/Tablet view tab switcher */}
+        <div className="no-print border-b border-slate-200 bg-white lg:hidden">
+          <div className="mx-auto flex max-w-7xl px-4 py-2 gap-2">
+            <button
+              type="button"
+              onClick={() => setActiveTab('main')}
+              className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition-colors ${
+                activeTab === 'main'
+                  ? 'bg-slate-900 text-white shadow-xs'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
+            >
+              📋 Case Details
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('timeline')}
+              className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition-colors ${
+                activeTab === 'timeline'
+                  ? 'bg-slate-900 text-white shadow-xs'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
+            >
+              ⏱️ Timeline
+            </button>
+            {right && (
+              <button
+                type="button"
+                onClick={() => setActiveTab('verification')}
+                className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition-colors ${
+                  activeTab === 'verification'
+                    ? 'bg-slate-900 text-white shadow-xs'
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                }`}
+              >
+                🛡️ Verification
+              </button>
+            )}
+          </div>
         </div>
-      </main>
+
+        <main className="case-file-main mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 sm:py-8 animate-route-in">
+          <p className="print-header mb-6 hidden font-mono text-xs uppercase tracking-[0.08em] text-slate-500">
+            Care Mediator — Case Summary — {role} view
+          </p>
+
+          <div className="case-file-grid grid grid-cols-1 gap-6 lg:grid-cols-[240px_minmax(0,1fr)_300px]">
+            {/* Left Timeline Rail */}
+            <aside className={`no-print lg:block lg:sticky lg:top-20 lg:self-start ${activeTab === 'timeline' ? 'block' : 'hidden'}`}>
+              {timeline}
+            </aside>
+
+            {/* Main Case Content */}
+            <div className={`min-w-0 space-y-6 lg:block ${activeTab === 'main' ? 'block' : 'hidden'}`}>
+              {children}
+            </div>
+
+            {/* Right Verification & Action Rail */}
+            <aside className={`no-print space-y-6 lg:block lg:sticky lg:top-20 lg:self-start ${activeTab === 'verification' ? 'block' : 'hidden'}`}>
+              {right}
+            </aside>
+          </div>
+        </main>
+      </div>
     </div>
   );
 }

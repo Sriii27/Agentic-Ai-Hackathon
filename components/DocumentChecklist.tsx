@@ -6,24 +6,15 @@ import { Badge } from './ui/Badge';
 import { listDocuments, uploadDocument, ApiError } from '@/lib/api';
 import type { DocumentId, DocumentRecord } from '@/lib/types';
 
-export const DOCUMENT_DEFS: { id: DocumentId; label: string }[] = [
-  { id: 'discharge-summary', label: 'Discharge summary' },
-  { id: 'id-proof', label: 'ID proof' },
-  { id: 'policy-document', label: 'Policy document' },
-  { id: 'itemized-bill', label: 'Itemized hospital bill' },
+export const DOCUMENT_DEFS: { id: DocumentId; label: string; desc: string }[] = [
+  { id: 'discharge-summary', label: 'Discharge Summary', desc: 'Medical summary' },
+  { id: 'id-proof', label: 'Government ID', desc: 'Aadhaar or Passport' },
+  { id: 'policy-document', label: 'Policy Document', desc: 'Policy schedule' },
+  { id: 'itemized-bill', label: 'Itemized Bill', desc: 'Detailed hospital bill' },
 ];
 
 export const DOCUMENT_IDS = DOCUMENT_DEFS.map((d) => d.id);
 
-/**
- * Evidence checklist for the hospital and patient views. Backed by real
- * uploads to the backend (`POST /api/cases/:caseId/documents`) — files
- * are actually stored, not just simulated client-side.
- *
- * `caseId` is null before a case exists yet (e.g. the hospital form
- * hasn't been submitted) — the panel still renders so the checklist
- * reads as a preview of what will be required, but uploads are disabled.
- */
 export function DocumentChecklist({
   caseId,
   onChange,
@@ -36,10 +27,6 @@ export function DocumentChecklist({
   const [uploadingId, setUploadingId] = useState<DocumentId | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
 
-  // Clear stale rows the moment the case identity changes (including back
-  // to null, e.g. "Submit another case") — adjusting state during render
-  // rather than in an effect, per React's guidance for syncing to a
-  // changing key.
   if (caseId !== loadedCaseId) {
     setLoadedCaseId(caseId);
     setDocuments([]);
@@ -54,13 +41,10 @@ export function DocumentChecklist({
         setDocuments(docs);
         onChange?.(docs.map((d) => d.documentId));
       })
-      .catch(() => {
-        // Leave the checklist empty — every row just reads "Missing", which is honest either way.
-      });
+      .catch(() => {});
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- onChange is a stable setState setter in every call site
   }, [caseId]);
 
   async function handleUpload(id: DocumentId, files: FileList | null) {
@@ -80,48 +64,54 @@ export function DocumentChecklist({
 
   return (
     <Card>
-      <CardHeader
-        title="Evidence Panel"
-        subtitle={caseId ? 'Documents expected for this case' : 'Documents that will be required'}
-      />
+      <CardHeader title="Documents" />
       <CardBody className="space-y-3">
         {!caseId && (
-          <p className="text-xs text-slate">
-            Submit the case first — uploads attach to a real case record.
-          </p>
+          <p className="text-xs text-slate-500">Submit the case form first to enable file uploads.</p>
         )}
-        {uploadError && <p className="text-xs text-amber">{uploadError}</p>}
+        
+        {uploadError && <p className="text-xs text-amber-700">⚠️ {uploadError}</p>}
 
-        {DOCUMENT_DEFS.map((doc) => {
-          const isUploaded = documents.some((d) => d.documentId === doc.id);
-          const isUploading = uploadingId === doc.id;
-          return (
-            <div
-              key={doc.id}
-              className="flex items-center justify-between gap-3 rounded-lg border border-hairline px-4 py-3"
-            >
-              <div>
-                <p className="text-sm font-medium text-ink">{doc.label}</p>
-                <div className="mt-2">
-                  <Badge tone={isUploaded ? 'verified' : 'amber'}>
-                    {isUploaded ? 'Uploaded' : 'Missing'}
-                  </Badge>
+        <div className="grid grid-cols-1 gap-2.5">
+          {DOCUMENT_DEFS.map((doc) => {
+            const isUploaded = documents.some((d) => d.documentId === doc.id);
+            const isUploading = uploadingId === doc.id;
+            return (
+              <div
+                key={doc.id}
+                className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-3 text-xs"
+              >
+                <div className="flex items-center gap-2.5">
+                  <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md font-bold ${
+                    isUploaded ? 'bg-teal-600 text-white' : 'bg-slate-100 text-slate-400'
+                  }`}>
+                    {isUploaded ? '✓' : '📄'}
+                  </span>
+                  <div>
+                    <span className="font-bold text-slate-900">{doc.label}</span>
+                    <span className="ml-2 text-slate-400">({doc.desc})</span>
+                  </div>
                 </div>
+
+                {isUploaded ? (
+                  <Badge tone="verified" className="text-[10px] py-0 px-2">Uploaded</Badge>
+                ) : caseId ? (
+                  <label className="cm-button shrink-0 cursor-pointer text-xs py-1 px-2.5">
+                    {isUploading ? 'Uploading…' : 'Upload'}
+                    <input
+                      type="file"
+                      className="hidden"
+                      disabled={isUploading}
+                      onChange={(e) => handleUpload(doc.id, e.target.files)}
+                    />
+                  </label>
+                ) : (
+                  <Badge tone="amber" className="text-[10px] py-0 px-2">Required</Badge>
+                )}
               </div>
-              {!isUploaded && caseId && (
-                <label className="cm-button shrink-0 cursor-pointer text-sm">
-                  {isUploading ? 'Uploading…' : 'Upload'}
-                  <input
-                    type="file"
-                    className="hidden"
-                    disabled={isUploading}
-                    onChange={(e) => handleUpload(doc.id, e.target.files)}
-                  />
-                </label>
-              )}
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </CardBody>
     </Card>
   );

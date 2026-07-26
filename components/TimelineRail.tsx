@@ -8,55 +8,46 @@ const ACTOR_LABEL: Record<TimelineActor, string> = {
   system: 'System',
 };
 
-const ACTOR_DOT: Record<TimelineActor, string> = {
-  hospital: 'bg-ink',
-  insurer: 'bg-slate',
-  patient: 'bg-verified',
-  system: 'bg-slate/40',
+const ACTOR_BADGE: Record<TimelineActor, string> = {
+  hospital: 'bg-slate-900 text-white',
+  insurer: 'bg-slate-600 text-white',
+  patient: 'bg-teal-600 text-white',
+  system: 'bg-amber-500 text-white',
 };
 
-/**
- * The left rail on every full page. Renders identically no matter which
- * role is viewing it — newest event first, same dots, same order.
- */
+const ACTOR_ICON: Record<TimelineActor, string> = {
+  hospital: '🏥',
+  insurer: '🛡️',
+  patient: '👤',
+  system: '🤖',
+};
+
 export function TimelineRail({ events }: { events: TimelineEvent[] }) {
   const ordered = [...events].reverse();
 
   return (
-    <div className="rounded-lg border border-hairline bg-paper-raised p-4">
-      <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate">
-        Case Timeline
-      </p>
-      <p className="mt-1 text-xs text-slate/80">
-        Identical for every role
-      </p>
+    <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-xs">
+      <div className="flex items-center justify-between border-b border-slate-100 pb-2.5 mb-3">
+        <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+          Activity Log
+        </h2>
+        <span className="font-mono text-[10px] font-bold text-slate-400">
+          {events.length}
+        </span>
+      </div>
 
-      <ol className="mt-4 space-y-0">
+      <ol className="space-y-3">
         {ordered.map((event, index) => (
-          <li
-            key={`${event.timestamp}-${index}`}
-            className="relative flex gap-3 pb-5 last:pb-0"
-          >
-            {index !== ordered.length - 1 && (
-              <span
-                className="absolute left-1.5 top-3 h-full w-px bg-hairline"
-                aria-hidden
-              />
-            )}
-            <span
-              className={`relative mt-1 h-2.5 w-2.5 shrink-0 rounded-full ${ACTOR_DOT[event.actor]}`}
-              aria-hidden
-            />
-            <div className="min-w-0">
-              <p className="text-xs font-semibold text-ink">
-                {ACTOR_LABEL[event.actor]}
-              </p>
-              <p className="font-mono text-xs text-slate">
-                {formatDateTime(event.timestamp)}
-              </p>
-              <p className="mt-1 text-xs leading-snug text-slate">
-                {event.event}
-              </p>
+          <li key={`${event.timestamp}-${index}`} className="relative flex gap-2.5">
+            <div className={`relative z-10 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] ${ACTOR_BADGE[event.actor]}`}>
+              {ACTOR_ICON[event.actor]}
+            </div>
+            <div className="min-w-0 flex-1 text-xs">
+              <div className="flex items-baseline justify-between">
+                <span className="font-bold text-slate-900">{ACTOR_LABEL[event.actor]}</span>
+                <span className="font-mono text-[10px] text-slate-400">{formatDateTime(event.timestamp)}</span>
+              </div>
+              <p className="mt-0.5 text-[11px] text-slate-600 leading-snug">{event.event}</p>
             </div>
           </li>
         ))}
@@ -67,11 +58,11 @@ export function TimelineRail({ events }: { events: TimelineEvent[] }) {
 
 export function TimelineRailEmpty({ message }: { message: string }) {
   return (
-    <div className="rounded-lg border border-dashed border-hairline bg-paper-raised p-4">
-      <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate">
-        Case Timeline
-      </p>
-      <p className="mt-3 text-sm leading-snug text-slate">{message}</p>
+    <div className="rounded-2xl border border-dashed border-slate-200 bg-white p-4 text-center">
+      <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+        Activity Log
+      </h2>
+      <p className="mt-2 text-xs text-slate-500">{message}</p>
     </div>
   );
 }

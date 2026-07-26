@@ -4,156 +4,149 @@ import { useState, useRef } from 'react';
 import { useCase } from '@/lib/case-context';
 import { ApiError } from '@/lib/api';
 import { VerificationStamp } from './VerificationStamp';
-import { formatDateTime } from '@/lib/utils';
+import { formatCurrency, formatDateTime } from '@/lib/utils';
 import type { ClaimStatus, DecisionInput } from '@/lib/types';
 
-type ActionMode = null | 'approve' | 'more-info' | 'deny';
+type ActionMode = null | 'approve-custom' | 'more-info' | 'deny';
 
-const ACTION_LABELS: Record<NonNullable<ActionMode>, string> = {
-  approve: 'Approve claim',
-  'more-info': 'Request more information',
-  deny: 'Deny claim',
-};
-
-/**
- * Insurer-only panel. Three distinct actions, each with a confirmation
- * step. Every action calls `POST /api/cases/:caseId/decision` on the real
- * backend, which appends a timeline event server-side — so all three
- * role-views see the decision update as soon as they (re)fetch the case.
- */
 export function InsurerActionPanel() {
   const { caseData, submitDecision } = useCase();
   const [mode, setMode] = useState<ActionMode>(null);
+  const [customAmount, setCustomAmount] = useState<string>('');
   const [note, setNote] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [committedAt, setCommittedAt] = useState<string | null>(null);
-  const [committedStatus, setCommittedStatus] = useState<ClaimStatus | null>(null);
+  const [editingCommitted, setEditingCommitted] = useState(false);
   const noteRef = useRef<HTMLTextAreaElement>(null);
 
   if (!caseData) return null;
 
-  // Once a decision is made this session, show a stamp instead of buttons.
-  if (committedAt && committedStatus) {
-    const isApproved = committedStatus === 'approved';
-    const label = isApproved
-      ? 'Claim approved'
-      : committedStatus === 'more-info-requested'
-        ? 'More info requested'
-        : 'Claim denied';
-
-    return (
-      <div className="rounded-lg border border-hairline bg-paper-raised">
-        <div className="border-b border-hairline px-6 py-4">
-          <h2 className="text-xs font-semibold uppercase tracking-[0.08em] text-slate">
-            Insurer Decision
-          </h2>
-          <p className="mt-2 text-base text-ink">Decision recorded</p>
-        </div>
-        <div className="space-y-3 px-6 py-4">
-          <div className="rounded-lg border border-verified/30 bg-verified-tint px-4 py-3">
-            <p className="text-sm font-semibold text-verified">{label}</p>
-            <p className="mt-1 font-mono text-xs text-slate">{formatDateTime(committedAt)}</p>
-          </div>
-          <VerificationStamp
-            status="verified"
-            verb="Verified"
-            label="decision saved on the backend"
-            compact
-          />
-          <p className="text-xs text-slate">
-            Persisted on the server — switch to the Patient or Hospital view (or reload) to confirm.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  async function commit(status: ClaimStatus) {
+  async function handleApproveCustom(e: React.FormEvent) {
+    e.preventDefault();
     if (!caseData) return;
     setSubmitting(true);
     setSubmitError(null);
 
+    const amountNum = Number(customAmount || caseData.hospitalEstimate);
+    if (isNaN(amountNum) || amountNum < 0) {
+      setSubmitError('Please enter a valid positive approved amount.');
+      setSubmitting(false);
+      return;
+    }
+    if (amountNum > caseData.hospitalEstimate) {
+      setSubmitError(`Approved amount cannot exceed hospital estimate of ${formatCurrency(caseData.hospitalEstimate)}.`);
+      setSubmitting(false);
+      return;
+    }
+
     const trimmedNote = note.trim();
     let decision: DecisionInput;
-    if (status === 'approved') {
+    if (amountNum === caseData.hospitalEstimate) {
       decision = { action: 'approve' };
-    } else if (status === 'denied') {
-      decision = { action: 'deny', note: trimmedNote || 'No reason given.' };
     } else {
-      decision = { action: 'more-info', note: trimmedNote || 'No detail given.' };
+      decision = {
+        action: 'partial',
+        approvedAmount: amountNum,
+        note: trimmedNote || `Approved amount set to ${formatCurrency(amountNum)}.`,
+      };
     }
 
     try {
       await submitDecision(decision);
-      setCommittedAt(new Date().toISOString());
-      setCommittedStatus(status);
       setMode(null);
       setNote('');
+      setEditingCommitted(false);
     } catch (err) {
-      setSubmitError(err instanceof ApiError ? err.message : 'Could not save the decision.');
+      setSubmitError(err instanceof ApiError ? err.message : 'Could not save approved amount.');
     } finally {
       setSubmitting(false);
     }
   }
 
-  // Already decided from a previous session / seed data.
-  const alreadyDecided =
-    caseData.claimStatus !== 'pending' && caseData.claimStatus !== 'more-info-requested';
+  async function handleDenyOrInfo(actionType: 'deny' | 'more-info') {
+    if (!caseData) return;
+    setSubmitting(true);
+    setSubmitError(null);
+    const trimmedNote = note.trim();
+
+    const decision: DecisionInput =
+      actionType === 'deny'
+        ? { action: 'deny', note: trimmedNote || 'Claim denied.' }
+        : { action: 'more-info', note: trimmedNote || 'More details needed.' };
+
+    try {
+      await submitDecision(decision);
+      setMode(null);
+      setNote('');
+      setEditingCommitted(false);
+    } catch (err) {
+      setSubmitError(err instanceof ApiError ? err.message : 'Could not save decision.');
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  const isDecided = caseData.claimStatus === 'approved' || caseData.claimStatus === 'partial';
 
   return (
-    <div className="rounded-lg border border-hairline bg-paper-raised">
-      <div className="border-b border-hairline px-6 py-4">
-        <h2 className="text-xs font-semibold uppercase tracking-[0.08em] text-slate">
-          Insurer Decision
+    <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-xs">
+      <div className="border-b border-slate-100 pb-2 mb-3 flex items-center justify-between">
+        <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+          Insurer Adjudication
         </h2>
-        <p className="mt-2 text-base text-ink">
-          {alreadyDecided ? 'Review existing decision' : 'Take action on this case'}
-        </p>
+        {isDecided && (
+          <span className="text-[10px] font-bold text-teal-700 bg-teal-50 border border-teal-200 px-2 py-0.5 rounded-full">
+            ● Decision Recorded
+          </span>
+        )}
       </div>
 
-      <div className="space-y-3 px-6 py-4">
-        {alreadyDecided && (
-          <div className="rounded-lg border border-amber/30 bg-amber-tint px-4 py-3">
-            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-amber">
-              Already decided
-            </p>
-            <p className="mt-1 text-sm text-amber/90">
-              This case already has a recorded decision ({caseData.claimStatus}). You can override
-              it using the actions below.
-            </p>
+      <div className="space-y-3">
+        {/* Approved Summary Card with Re-edit Button */}
+        {isDecided && !editingCommitted && mode === null && (
+          <div className="rounded-xl border border-teal-200 bg-teal-50/60 p-3 text-xs space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="font-bold text-teal-900">Approved Amount</span>
+              <span className="font-mono text-base font-extrabold text-teal-800">
+                {formatCurrency(caseData.insurerApproved)}
+              </span>
+            </div>
+            <div className="flex items-center justify-between text-[11px] text-teal-700 pt-1 border-t border-teal-200/60">
+              <span>Patient Gap: {formatCurrency(caseData.gap)}</span>
+              <button
+                type="button"
+                onClick={() => {
+                  setCustomAmount(String(caseData.insurerApproved));
+                  setMode('approve-custom');
+                  setEditingCommitted(true);
+                }}
+                className="font-bold text-teal-800 hover:underline bg-white px-2 py-0.5 rounded border border-teal-200"
+              >
+                ✏️ Edit Amount
+              </button>
+            </div>
           </div>
         )}
 
         {submitError && (
-          <div className="rounded-lg border border-amber/30 bg-amber-tint px-4 py-3 text-sm text-amber">
-            {submitError}
-          </div>
+          <p className="text-xs text-amber-700 bg-amber-50 p-2.5 rounded-xl border border-amber-200">
+            ⚠️ {submitError}
+          </p>
         )}
 
+        {/* Initial Buttons */}
         {mode === null && (
           <div className="flex flex-col gap-2">
             <button
               type="button"
-              onClick={() => commit('approved')}
+              onClick={() => {
+                setCustomAmount(String(caseData.insurerApproved || caseData.hospitalEstimate));
+                setMode('approve-custom');
+              }}
               disabled={submitting}
-              className="cm-button cm-button-primary flex items-center justify-center gap-2 disabled:opacity-60"
+              className="cm-button cm-button-verified w-full py-2 text-xs font-bold disabled:opacity-60"
             >
-              <span
-                aria-hidden
-                className="flex h-4 w-4 items-center justify-center rounded-full border border-paper bg-paper/20"
-              >
-                <svg
-                  viewBox="0 0 12 12"
-                  className="h-2 w-2 text-paper"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path d="M2.5 6.2 5 8.7 9.5 3.3" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </span>
-              {submitting ? 'Saving…' : 'Approve claim'}
+              ✏️ {isDecided ? 'Edit Approved Amount' : 'Approve / Edit Amount'}
             </button>
 
             <button
@@ -163,10 +156,9 @@ export function InsurerActionPanel() {
                 setMode('more-info');
                 setTimeout(() => noteRef.current?.focus(), 50);
               }}
-              className="cm-button cm-button-amber flex items-center justify-center gap-2 disabled:opacity-60"
+              className="cm-button cm-button-amber w-full py-2 text-xs font-semibold disabled:opacity-60"
             >
-              <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-amber" />
-              Request more information
+              💬 Request Info
             </button>
 
             <button
@@ -176,38 +168,103 @@ export function InsurerActionPanel() {
                 setMode('deny');
                 setTimeout(() => noteRef.current?.focus(), 50);
               }}
-              className="cm-button flex items-center justify-center gap-2 border-amber/50 text-amber hover:bg-amber-tint disabled:opacity-60"
+              className="cm-button w-full py-2 text-xs font-semibold border-slate-200 text-slate-700 hover:bg-slate-100 disabled:opacity-60"
             >
-              <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-amber" />
-              Deny claim
+              🚫 Deny Claim
             </button>
           </div>
         )}
 
-        {(mode === 'more-info' || mode === 'deny') && (
-          <div className="space-y-3">
-            <p className="text-sm font-semibold text-ink">{ACTION_LABELS[mode]}</p>
-            <label className="block text-sm font-medium text-ink">
-              {mode === 'deny' ? 'Denial reason' : 'Information needed'}
+        {/* Mode: Custom Approve / Edit Approved Amount Form */}
+        {mode === 'approve-custom' && (
+          <form onSubmit={handleApproveCustom} className="space-y-3 rounded-xl border border-teal-200 bg-teal-50/50 p-3">
+            <div>
+              <label className="block text-xs font-bold text-teal-900">
+                Set Approved Amount (₹)
+              </label>
+              <div className="mt-1 flex items-center gap-2">
+                <input
+                  type="number"
+                  min="0"
+                  max={caseData.hospitalEstimate}
+                  value={customAmount}
+                  onChange={(e) => setCustomAmount(e.target.value)}
+                  className="cm-field text-xs font-mono font-bold bg-white"
+                  placeholder={String(caseData.hospitalEstimate)}
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setCustomAmount(String(caseData.hospitalEstimate))}
+                  className="shrink-0 text-[10px] font-bold bg-teal-600 text-white px-2 py-2 rounded-lg"
+                  title="Approve 100% full estimate"
+                >
+                  Full 100%
+                </button>
+              </div>
+              <p className="mt-1 text-[10px] text-teal-700">
+                Hospital Estimate: {formatCurrency(caseData.hospitalEstimate)}
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-semibold text-slate-700">
+                Approval Note / Adjudication Remarks (Optional)
+              </label>
               <textarea
                 ref={noteRef}
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
-                rows={3}
-                className="cm-field mt-1"
-                placeholder={
-                  mode === 'deny'
-                    ? 'State the reason for denial…'
-                    : 'Describe what additional information is needed…'
-                }
+                rows={2}
+                className="cm-field text-xs bg-white mt-1"
+                placeholder="e.g. Approved per CGHS code guidelines..."
               />
-            </label>
+            </div>
+
+            <div className="flex gap-2">
+              <button
+                type="submit"
+                disabled={submitting}
+                className="cm-button cm-button-verified flex-1 text-xs py-1.5 font-bold disabled:opacity-60"
+              >
+                {submitting ? 'Saving…' : '✓ Confirm Approved Amount'}
+              </button>
+              <button
+                type="button"
+                disabled={submitting}
+                onClick={() => {
+                  setMode(null);
+                  setNote('');
+                  setEditingCommitted(false);
+                }}
+                className="cm-button text-xs py-1.5"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        )}
+
+        {/* Mode: Deny / Request Info Form */}
+        {(mode === 'more-info' || mode === 'deny') && (
+          <div className="space-y-2 rounded-xl border border-slate-200 bg-slate-50 p-3">
+            <p className="text-xs font-bold text-slate-800">
+              {mode === 'deny' ? 'Deny Claim' : 'Request More Info'}
+            </p>
+            <textarea
+              ref={noteRef}
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              rows={2}
+              className="cm-field text-xs bg-white mt-1"
+              placeholder={mode === 'deny' ? 'Reason for denial…' : 'Details needed from hospital/patient…'}
+            />
             <div className="flex gap-2">
               <button
                 type="button"
                 disabled={submitting}
-                onClick={() => commit(mode === 'deny' ? 'denied' : 'more-info-requested')}
-                className="cm-button cm-button-primary flex-1 disabled:opacity-60"
+                onClick={() => handleDenyOrInfo(mode)}
+                className="cm-button cm-button-primary flex-1 text-xs py-1.5 disabled:opacity-60"
               >
                 {submitting ? 'Saving…' : 'Confirm'}
               </button>
@@ -218,17 +275,13 @@ export function InsurerActionPanel() {
                   setMode(null);
                   setNote('');
                 }}
-                className="cm-button disabled:opacity-60"
+                className="cm-button text-xs py-1.5"
               >
                 Cancel
               </button>
             </div>
           </div>
         )}
-
-        <p className="text-xs text-slate">
-          Actions are saved on the backend and appended to the shared timeline.
-        </p>
       </div>
     </div>
   );

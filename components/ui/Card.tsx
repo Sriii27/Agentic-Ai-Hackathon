@@ -9,7 +9,7 @@ export function Card({
 }) {
   return (
     <div
-      className={`rounded-lg border border-hairline bg-paper-raised ${className}`}
+      className={`rounded-2xl border border-slate-200/90 bg-white shadow-xs transition-shadow hover:shadow-sm ${className}`}
     >
       {children}
     </div>
@@ -26,12 +26,12 @@ export function CardHeader({
   action?: ReactNode;
 }) {
   return (
-    <div className="flex items-start justify-between gap-4 border-b border-hairline px-6 py-4">
+    <div className="flex items-start justify-between gap-4 border-b border-slate-100 px-6 py-4">
       <div>
-        <h2 className="text-xs font-semibold uppercase tracking-[0.08em] text-slate">
+        <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">
           {title}
         </h2>
-        {subtitle && <p className="mt-2 text-base text-ink">{subtitle}</p>}
+        {subtitle && <p className="mt-1 text-base font-semibold text-slate-900">{subtitle}</p>}
       </div>
       {action}
     </div>
@@ -45,5 +45,5 @@ export function CardBody({
   children: ReactNode;
   className?: string;
 }) {
-  return <div className={`px-6 py-4 ${className}`}>{children}</div>;
+  return <div className={`px-6 py-5 ${className}`}>{children}</div>;
 }

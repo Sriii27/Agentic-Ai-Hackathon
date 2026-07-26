@@ -13,9 +13,13 @@
 # testing
 /coverage
 
-# next.js
+# next.js & builds
 /.next/
 /out/
+/dist/
+src/widgets/.next/
+src/widgets/node_modules/
+src/widgets/out/
 
 # production
 /build

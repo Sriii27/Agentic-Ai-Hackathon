@@ -6,10 +6,10 @@ import type { ClaimStatus } from '@/lib/types';
 
 const STATUS_LABEL: Record<ClaimStatus, string> = {
   approved: 'Approved',
-  partial: 'Partially approved',
+  partial: 'Partially Approved',
   denied: 'Denied',
-  pending: 'Pending',
-  'more-info-requested': 'More info requested',
+  pending: 'Pending Review',
+  'more-info-requested': 'Info Requested',
 };
 
 const STATUS_TONE: Record<ClaimStatus, BadgeTone> = {
@@ -40,68 +40,77 @@ export function Ledger({
     <Card>
       <CardHeader
         title="Cost Ledger"
-        subtitle="Hospital estimate vs. what the insurer approved"
-        action={<Badge tone={STATUS_TONE[claimStatus]}>{STATUS_LABEL[claimStatus]}</Badge>}
+        action={<Badge tone={STATUS_TONE[claimStatus]} className="py-0.5 px-2.5 text-xs">{STATUS_LABEL[claimStatus]}</Badge>}
       />
-      <CardBody>
-        <div
-          className="flex h-3 w-full overflow-hidden rounded bg-ink-tint"
-          role="img"
-          aria-label={`${approvedPct}% approved, ${gapPct}% gap`}
-        >
-          {approvedPct > 0 && (
-            <div
-              className="h-full bg-ink"
-              style={{ width: `${approvedPct}%` }}
-            />
-          )}
-          {gapPct > 0 && (
-            <div
-              className="h-full bg-amber"
-              style={{ width: `${gapPct}%` }}
-            />
-          )}
+      <CardBody className="space-y-5">
+        {/* Split Bar */}
+        <div>
+          <div className="flex items-center justify-between text-xs font-semibold text-slate-500 mb-1.5">
+            <span>Coverage Split</span>
+            <span className="font-mono text-slate-700">{approvedPct}% Covered</span>
+          </div>
+          <div
+            className="flex h-3 w-full overflow-hidden rounded-full bg-slate-100 p-0.5 border border-slate-200/60"
+            role="img"
+            aria-label={`${approvedPct}% approved, ${gapPct}% gap`}
+          >
+            {approvedPct > 0 && (
+              <div
+                className="h-full rounded-full bg-teal-600 transition-all duration-300"
+                style={{ width: `${approvedPct}%` }}
+              />
+            )}
+            {gapPct > 0 && (
+              <div
+                className="h-full rounded-full bg-amber-500 transition-all duration-300"
+                style={{ width: `${gapPct}%` }}
+              />
+            )}
+          </div>
         </div>
 
-        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-slate">
-              Hospital estimate
+        {/* 3 Metric Boxes */}
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <div className="rounded-xl border border-slate-200/80 bg-slate-50/50 p-3.5">
+            <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+              Hospital Estimate
             </p>
-            <p className="mt-2 font-mono text-xl font-semibold text-ink">
+            <p className="mt-1 font-mono text-xl font-bold text-slate-900">
               {formatCurrency(hospitalEstimate)}
             </p>
             <div className="mt-2">
-              <VerificationStamp status="verified" verb="Verified" label="CGHS rate list" compact />
+              <VerificationStamp status="verified" verb="Verified" label="CGHS list" compact />
             </div>
           </div>
-          <div>
-            <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-slate">
-              <span className="inline-block h-2 w-2 rounded-full bg-ink" />
-              Insurer approved
+
+          <div className="rounded-xl border border-teal-100 bg-teal-50/40 p-3.5">
+            <p className="flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-teal-800">
+              <span className="h-2 w-2 rounded-full bg-teal-600" />
+              Insurer Approved
             </p>
-            <p className="mt-2 font-mono text-xl font-semibold text-ink">
+            <p className="mt-1 font-mono text-xl font-bold text-teal-900">
               {formatCurrency(insurerApproved)}
             </p>
             <div className="mt-2">
-              <VerificationStamp status="verified" verb="Cross-checked" label="insurer approval memo" compact />
+              <VerificationStamp status="verified" verb="Cross-checked" label="policy" compact />
             </div>
           </div>
-          <div>
-            <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-slate">
-              <span className="inline-block h-2 w-2 rounded-full bg-amber" />
-              Gap (patient owes)
+
+          <div className={`rounded-xl border p-3.5 ${
+            gap > 0 ? 'border-amber-200 bg-amber-50/40' : 'border-slate-200/80 bg-slate-50/50'
+          }`}>
+            <p className="flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-slate-700">
+              <span className={`h-2 w-2 rounded-full ${gap > 0 ? 'bg-amber-500' : 'bg-slate-400'}`} />
+              Patient Gap
             </p>
-            <p
-              className={`mt-1 font-mono text-xl font-semibold ${gap > 0 ? 'text-amber' : 'text-ink'}`}
-            >
+            <p className={`mt-1 font-mono text-xl font-bold ${gap > 0 ? 'text-amber-700' : 'text-slate-900'}`}>
               {formatCurrency(gap)}
             </p>
             <div className="mt-2">
               <VerificationStamp
                 status={gap > 0 ? 'pending' : 'verified'}
                 verb="Verified"
-                label="zero patient liability"
+                label={gap > 0 ? 'out of pocket' : 'zero gap'}
                 compact
               />
             </div>

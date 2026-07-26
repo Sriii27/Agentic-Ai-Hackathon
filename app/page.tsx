@@ -1,228 +1,283 @@
-import Link from 'next/link';
-import { VerificationStamp } from '@/components/VerificationStamp';
+'use client';
 
-/**
- * Landing page — the "pitch in five seconds" view.
- *
- * No sidebar rails here. The shared-case-record concept is explained through
- * a three-step flow diagram that reuses the timeline-dot motif, so the
- * visual language carries across every role view.
- */
+import { Suspense, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useAuth, MOCK_USERS, type UserRole } from '@/lib/auth-context';
+import { useCase } from '@/lib/case-context';
+import { VerificationStamp } from '@/components/VerificationStamp';
+import Link from 'next/link';
+
+function LoginAndOverviewContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const initialRole = (searchParams.get('role') as Exclude<UserRole, 'guest'>) || 'hospital';
+
+  const { loginAsRole, loginCustom, user } = useAuth();
+  const { setCaseId } = useCase();
+  const [selectedRole, setSelectedRole] = useState<Exclude<UserRole, 'guest'>>(initialRole);
+
+  // Custom Form State
+  const [name, setName] = useState('');
+  const [idNumber, setIdNumber] = useState('');
+
+  function handleDemoLogin(role: Exclude<UserRole, 'guest'>, caseIdToLoad?: string) {
+    if (caseIdToLoad) setCaseId(caseIdToLoad);
+    loginAsRole(role);
+    router.push(`/${role}`);
+  }
+
+  function handleCustomLogin(e: React.FormEvent) {
+    e.preventDefault();
+    const fallbackMock = MOCK_USERS[selectedRole];
+    loginCustom({
+      id: `custom-${Date.now()}`,
+      name: name.trim() || fallbackMock.name,
+      role: selectedRole,
+      email: fallbackMock.email,
+      organization: fallbackMock.organization,
+      idNumber: idNumber.trim() || fallbackMock.idNumber,
+      title: selectedRole === 'hospital' ? 'Hospital Employee' : selectedRole === 'insurer' ? 'Claims Agent' : 'Patient',
+    });
+    router.push(`/${selectedRole}`);
+  }
+
+  return (
+    <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6 sm:px-6 sm:py-10 animate-route-in space-y-8">
+      
+      {/* Hero & Welcome */}
+      <section className="text-center sm:text-left rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-teal-200 bg-teal-50 px-3 py-0.5 text-xs font-bold text-teal-700">
+              ✓ Care Mediator — Shared Healthcare Record
+            </span>
+            <h1 className="mt-2 text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
+              One Verified File. All Parties.
+            </h1>
+            <p className="mt-1 text-xs sm:text-sm text-slate-600 max-w-xl">
+              Hospitals, patients, and insurers read the exact same record — checked against neutral rate lists before review.
+            </p>
+          </div>
+
+          {user && (
+            <div className="rounded-xl border border-teal-200 bg-teal-50 p-3 text-left">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-teal-700">Logged In As</span>
+              <p className="text-xs font-bold text-slate-900">{user.name}</p>
+              <p className="text-[11px] font-mono text-slate-600">{user.idNumber}</p>
+              <Link href={`/${user.role}`} className="mt-1.5 inline-block text-xs font-bold text-teal-700 hover:underline">
+                Go to {user.role.toUpperCase()} Dashboard →
+              </Link>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* LOGIN PORTAL SECTION */}
+      <section className="rounded-2xl border-2 border-teal-500/80 bg-white p-6 shadow-md relative">
+        <div className="mb-6 text-center sm:text-left border-b border-slate-100 pb-4">
+          <span className="rounded-full bg-slate-900 text-white font-mono text-[10px] font-bold px-2.5 py-0.5 uppercase tracking-wider">
+            Required Step
+          </span>
+          <h2 className="mt-2 text-xl font-extrabold text-slate-900">
+            Sign In to Access Your Dashboard
+          </h2>
+          <p className="mt-0.5 text-xs text-slate-500">
+            Select your role below or use a 1-click demo login to enter the live platform.
+          </p>
+        </div>
+
+        {/* 1-Click Instant Demo Login Buttons */}
+        <div className="mb-6 rounded-xl border border-teal-200 bg-teal-50/50 p-4">
+          <p className="text-xs font-bold uppercase tracking-wider text-teal-800 mb-2.5 text-center sm:text-left">
+            ⚡ Instant 1-Click Demo Logins
+          </p>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <button
+              type="button"
+              onClick={() => handleDemoLogin('hospital', 'clean-case')}
+              className="flex flex-col items-center sm:items-start rounded-xl border border-slate-200 bg-white p-3 text-xs font-bold text-slate-900 shadow-2xs hover:border-slate-400 hover:bg-slate-50 transition-all text-center sm:text-left"
+            >
+              <span className="text-sm">🏥 Hospital Staff Login</span>
+              <span className="text-[10px] font-medium text-slate-500 mt-0.5">Submit & audit claims</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleDemoLogin('patient', 'clean-case')}
+              className="flex flex-col items-center sm:items-start rounded-xl border border-teal-300 bg-teal-600 p-3 text-xs font-bold text-white shadow-2xs hover:bg-teal-700 transition-all text-center sm:text-left"
+            >
+              <span className="text-sm">👤 Patient Portal Login</span>
+              <span className="text-[10px] font-medium text-teal-100 mt-0.5">View bills & financing</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleDemoLogin('insurer', 'gotcha-case')}
+              className="flex flex-col items-center sm:items-start rounded-xl border border-slate-700 bg-slate-900 p-3 text-xs font-bold text-white shadow-2xs hover:bg-slate-800 transition-all text-center sm:text-left"
+            >
+              <span className="text-sm">🛡️ Insurance Agent Login</span>
+              <span className="text-[10px] font-medium text-slate-300 mt-0.5">Adjudicate pre-checked cases</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Custom Login Form Tabs */}
+        <div className="grid grid-cols-3 gap-1.5 rounded-xl border border-slate-200 bg-slate-100 p-1 mb-4 text-xs font-bold">
+          <button
+            type="button"
+            onClick={() => setSelectedRole('hospital')}
+            className={`py-2 px-3 rounded-lg transition-all ${
+              selectedRole === 'hospital' ? 'bg-white text-slate-900 shadow-2xs font-extrabold' : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            🏥 Hospital
+          </button>
+          <button
+            type="button"
+            onClick={() => setSelectedRole('patient')}
+            className={`py-2 px-3 rounded-lg transition-all ${
+              selectedRole === 'patient' ? 'bg-white text-slate-900 shadow-2xs font-extrabold' : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            👤 Patient
+          </button>
+          <button
+            type="button"
+            onClick={() => setSelectedRole('insurer')}
+            className={`py-2 px-3 rounded-lg transition-all ${
+              selectedRole === 'insurer' ? 'bg-white text-slate-900 shadow-2xs font-extrabold' : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            🛡️ Insurance Agent
+          </button>
+        </div>
+
+        {/* Form Inputs */}
+        <form onSubmit={handleCustomLogin} className="space-y-3 rounded-xl border border-slate-200 bg-slate-50/50 p-4">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div>
+              <label className="block text-xs font-bold text-slate-800">Full Name</label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder={MOCK_USERS[selectedRole].name}
+                className="cm-field text-xs bg-white"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-slate-800">
+                {selectedRole === 'hospital'
+                  ? 'Employee ID *'
+                  : selectedRole === 'patient'
+                    ? 'Policy Number / Aadhaar *'
+                    : 'Agent License ID *'}
+              </label>
+              <input
+                type="text"
+                value={idNumber}
+                onChange={(e) => setIdNumber(e.target.value)}
+                placeholder={MOCK_USERS[selectedRole].idNumber}
+                className="cm-field text-xs font-mono bg-white"
+              />
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            className="cm-button cm-button-primary w-full py-2.5 text-xs font-bold mt-2"
+          >
+            Sign In & Open {selectedRole === 'hospital' ? 'Hospital' : selectedRole === 'insurer' ? 'Insurer' : 'Patient'} Dashboard →
+          </button>
+        </form>
+      </section>
+
+      {/* APP INFO & HOW IT WORKS */}
+      <section className="space-y-4">
+        <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+          How Care Mediator Works
+        </h2>
+
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          <div className="rounded-2xl border border-slate-200 bg-white p-5">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-900 font-mono text-xs font-bold text-white">
+              1
+            </div>
+            <h3 className="mt-3 text-sm font-bold text-slate-900">Hospital Submits Case</h3>
+            <p className="mt-1 text-xs text-slate-500 leading-relaxed">
+              Hospital staff submits patient information, procedure code, and billing estimate.
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-teal-200 bg-teal-50/40 p-5">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-teal-600 font-mono text-xs font-bold text-white">
+              2
+            </div>
+            <h3 className="mt-3 text-sm font-bold text-slate-900">Automated Rate Check</h3>
+            <p className="mt-1 text-xs text-slate-500 leading-relaxed">
+              Objectivity agent cross-checks hospital estimates against neutral CGHS rates.
+            </p>
+            <div className="mt-2">
+              <VerificationStamp status="verified" verb="Verified" label="CGHS rates" compact />
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-slate-200 bg-white p-5">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-teal-700 font-mono text-xs font-bold text-white">
+              3
+            </div>
+            <h3 className="mt-3 text-sm font-bold text-slate-900">Single Shared Truth</h3>
+            <p className="mt-1 text-xs text-slate-500 leading-relaxed">
+              Patient, hospital, and insurer all view the exact same verified record and timeline.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Impact Stats */}
+      <section className="grid grid-cols-2 gap-3 sm:grid-cols-4 pt-2">
+        <div className="rounded-xl border border-slate-200 bg-white p-3 text-center">
+          <span className="text-[10px] font-bold uppercase text-slate-400">Claim Speed</span>
+          <p className="font-mono text-lg font-extrabold text-slate-900">&lt; 2 Mins</p>
+        </div>
+        <div className="rounded-xl border border-slate-200 bg-white p-3 text-center">
+          <span className="text-[10px] font-bold uppercase text-slate-400">Rate Audit</span>
+          <p className="font-mono text-lg font-extrabold text-teal-700">100% CGHS</p>
+        </div>
+        <div className="rounded-xl border border-slate-200 bg-white p-3 text-center">
+          <span className="text-[10px] font-bold uppercase text-slate-400">Disputes</span>
+          <p className="font-mono text-lg font-extrabold text-slate-900">0 Version Conflicts</p>
+        </div>
+        <div className="rounded-xl border border-slate-200 bg-white p-3 text-center">
+          <span className="text-[10px] font-bold uppercase text-slate-400">Financing</span>
+          <p className="font-mono text-lg font-extrabold text-teal-700">0% APR EMI</p>
+        </div>
+      </section>
+    </main>
+  );
+}
+
 export default function Home() {
   return (
-    <div className="flex min-h-screen flex-col bg-paper">
-      {/* Minimal top bar — no role badge, just the wordmark */}
-      <header className="border-b border-hairline bg-paper-raised">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4 sm:px-6">
-          <span className="text-lg font-semibold tracking-tight text-ink">Care Mediator</span>
-          <span className="rounded-full bg-verified-tint px-3 py-1 font-mono text-xs font-semibold uppercase tracking-[0.12em] text-verified">
-            Live demo
+    <div className="flex min-h-screen flex-col bg-slate-50/70">
+      {/* Header Bar */}
+      <header className="border-b border-slate-200/80 bg-white/90 backdrop-blur-md">
+        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6">
+          <div className="flex items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-600 font-bold text-white shadow-xs">
+              CM
+            </div>
+            <span className="text-base font-bold tracking-tight text-slate-900">Care Mediator</span>
+          </div>
+          <span className="rounded-full bg-teal-50 border border-teal-200 px-3 py-1 font-mono text-xs font-semibold text-teal-700">
+            ● Live Platform
           </span>
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-10 sm:px-6 sm:py-16">
-
-        {/* ── Hero ───────────────────────────────────────────────────── */}
-        <section className="mb-12">
-          <p className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-slate">
-            Shared case record
-          </p>
-          <h1 className="mt-3 text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-            One case. Every side of the table.<br className="hidden sm:block" /> No hidden version.
-          </h1>
-          <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate">
-            When a hospital submits a case, an objectivity agent checks every number against a
-            neutral source before the insurer sees it. The patient, hospital, and insurer all read
-            the same verified file — nothing is redacted or rewritten for any party.
-          </p>
-        </section>
-
-        {/* ── How it works — three-step flow ─────────────────────────── */}
-        <section
-          className="mb-14 rounded-xl border border-hairline bg-paper-raised p-6 sm:p-8"
-          aria-label="How the shared case record works"
-        >
-          <p className="mb-6 text-xs font-semibold uppercase tracking-[0.2em] text-slate">
-            How it works
-          </p>
-
-          <ol className="relative space-y-0">
-            {/* Step 1 */}
-            <li className="relative flex gap-5 pb-8 last:pb-0">
-              <div className="flex flex-col items-center">
-                <span
-                  aria-hidden
-                  className="relative z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 border-ink bg-ink font-mono text-xs font-bold text-paper"
-                >
-                  1
-                </span>
-                <span className="mt-1 flex-1 border-l-2 border-dashed border-hairline" aria-hidden />
-              </div>
-              <div className="pb-2 pt-0.5">
-                <p className="text-sm font-semibold text-ink">Hospital submits the case</p>
-                <p className="mt-1 text-sm text-slate">
-                  Patient details, procedure code, cost estimate, and supporting documents.
-                </p>
-                <div className="mt-2 inline-flex items-center gap-2 rounded-lg border border-hairline bg-paper px-3 py-2">
-                  <span className="font-mono text-xs text-slate">Estimated cost</span>
-                  <span className="font-mono text-xs font-semibold text-ink">₹1,85,000</span>
-                </div>
-              </div>
-            </li>
-
-            {/* Step 2 */}
-            <li className="relative flex gap-5 pb-8 last:pb-0">
-              <div className="flex flex-col items-center">
-                <span
-                  aria-hidden
-                  className="relative z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 border-slate bg-paper font-mono text-xs font-bold text-slate"
-                >
-                  2
-                </span>
-                <span className="mt-1 flex-1 border-l-2 border-dashed border-hairline" aria-hidden />
-              </div>
-              <div className="pb-2 pt-0.5">
-                <p className="text-sm font-semibold text-ink">Objectivity agent checks every number</p>
-                <p className="mt-1 text-sm text-slate">
-                  The estimate is cross-referenced against the CGHS rate list. Coverage exclusions
-                  are checked against policy terms. No manual step — this happens before the
-                  insurer&apos;s queue.
-                </p>
-                <div className="mt-2">
-                  <VerificationStamp status="verified" verb="Verified" label="CGHS rate list" />
-                </div>
-              </div>
-            </li>
-
-            {/* Step 3 */}
-            <li className="relative flex gap-5">
-              <div className="flex flex-col items-center">
-                <span
-                  aria-hidden
-                  className="relative z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 border-verified bg-verified font-mono text-xs font-bold text-paper"
-                >
-                  ✓
-                </span>
-              </div>
-              <div className="pt-0.5">
-                <p className="text-sm font-semibold text-ink">All three parties read the same file</p>
-                <p className="mt-1 text-sm text-slate">
-                  Patient, hospital, and insurer each see the verified case — same numbers, same
-                  timeline, same stamps. No version is softer or harder than another.
-                </p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {(['Hospital', 'Patient', 'Insurer'] as const).map((role) => (
-                    <span
-                      key={role}
-                      className="rounded-full border border-hairline bg-paper px-3 py-1 text-xs font-semibold text-slate"
-                    >
-                      {role}
-                    </span>
-                  ))}
-                  <span className="rounded-full border border-verified/40 bg-verified-tint px-3 py-1 text-xs font-semibold text-verified">
-                    Same record
-                  </span>
-                </div>
-              </div>
-            </li>
-          </ol>
-        </section>
-
-        {/* ── Role entry cards ────────────────────────────────────────── */}
-        <section aria-labelledby="role-cards-heading">
-          <p
-            id="role-cards-heading"
-            className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-slate"
-          >
-            Choose a role to explore
-          </p>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <RoleCard
-              href="/hospital"
-              title="Hospital"
-              action="Submit a new case"
-              description="Enter patient details, cost estimate, and supporting documents. The objectivity check runs automatically."
-              accent="border-l-ink"
-              badge={{ text: 'Submitter', tone: 'ink' }}
-            />
-            <RoleCard
-              href="/patient"
-              title="Patient"
-              action="View your case"
-              description="See exactly what the insurer sees — the ledger, coverage, financing options, and the full shared timeline."
-              accent="border-l-verified"
-              badge={{ text: 'Your record', tone: 'verified' }}
-            />
-            <RoleCard
-              href="/insurer"
-              title="Insurer"
-              action="Review and decide"
-              description="Read the verified case file and take a decision. Every action is appended to the shared timeline immediately."
-              accent="border-l-slate"
-              badge={{ text: 'Decision maker', tone: 'slate' }}
-            />
-          </div>
-        </section>
-
-        {/* ── Verification callout ────────────────────────────────────── */}
-        <section className="mt-10 flex items-start gap-3 rounded-lg border border-hairline bg-paper-raised p-4">
-          <VerificationStamp status="verified" verb="Verified" label="every figure has a source" />
-          <p className="text-sm text-slate">
-            Look for this stamp anywhere a number has been checked against a real source. Pending
-            items show an amber outline instead.
-          </p>
-        </section>
-      </main>
-
-      {/* Footer */}
-      <footer className="border-t border-hairline bg-paper-raised">
-        <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6">
-          <p className="text-sm text-slate">
-            <span className="font-semibold text-ink">Need help? </span>
-            If you disagree with a decision on this case, you can contact your policy&apos;s
-            grievance officer, or your state&apos;s insurance ombudsman, to ask about next steps
-            for escalation.
-          </p>
-        </div>
-      </footer>
+      <Suspense fallback={<div className="p-8 text-center text-xs text-slate-500">Loading Login Portal…</div>}>
+        <LoginAndOverviewContent />
+      </Suspense>
     </div>
-  );
-}
-
-type RoleCardProps = {
-  href: string;
-  title: string;
-  action: string;
-  description: string;
-  accent: string;
-  badge: { text: string; tone: 'ink' | 'verified' | 'slate' };
-};
-
-const BADGE_TONE_CLASSES: Record<'ink' | 'verified' | 'slate', string> = {
-  ink: 'bg-ink-tint text-ink ring-ink/15',
-  verified: 'bg-verified-tint text-verified ring-verified/25',
-  slate: 'bg-paper text-slate ring-hairline',
-};
-
-function RoleCard({ href, title, action, description, accent, badge }: RoleCardProps) {
-  return (
-    <Link
-      href={href}
-      className={`group flex flex-col rounded-xl border border-hairline border-l-4 bg-paper-raised p-5 transition-colors hover:bg-ink-tint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink ${accent}`}
-    >
-      <div className="flex items-start justify-between gap-2">
-        <span className="text-base font-semibold text-ink">{title}</span>
-        <span
-          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1 ring-inset ${BADGE_TONE_CLASSES[badge.tone]}`}
-        >
-          {badge.text}
-        </span>
-      </div>
-      <span className="mt-2 flex-1 text-sm leading-snug text-slate">{description}</span>
-      <span className="mt-5 text-sm font-semibold text-ink group-hover:underline">
-        {action} →
-      </span>
-    </Link>
   );
 }

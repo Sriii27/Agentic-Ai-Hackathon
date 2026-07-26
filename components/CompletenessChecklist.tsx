@@ -6,48 +6,45 @@ export type CompletenessItem = {
   done: boolean;
 };
 
-/**
- * What's still required before the insurer can review this case. Meant
- * to be prominent — this is the thing that prevents a denial later.
- */
 export function CompletenessChecklist({ items }: { items: CompletenessItem[] }) {
   const doneCount = items.filter((i) => i.done).length;
-  const allDone = doneCount === items.length;
+  const totalCount = items.length;
+  const pct = Math.round((doneCount / totalCount) * 100);
+  const allDone = doneCount === totalCount;
 
   return (
-    <Card className={allDone ? 'border-verified/30' : 'border-amber/40'}>
+    <Card className={allDone ? 'border-teal-200 bg-teal-50/10' : 'border-amber-200 bg-amber-50/10'}>
       <CardHeader
-        title="Before Insurer Review"
-        subtitle={`${doneCount} of ${items.length} ready`}
+        title="Checklist"
         action={
-          <Badge tone={allDone ? 'verified' : 'amber'}>
-            {allDone ? 'Ready' : 'Action needed'}
+          <Badge tone={allDone ? 'verified' : 'amber'} className="py-0.5 px-2.5 text-xs">
+            {allDone ? 'Ready' : `${doneCount}/${totalCount} Done`}
           </Badge>
         }
       />
-      <CardBody>
-        <ul className="space-y-3">
+      <CardBody className="space-y-3">
+        <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-100 border border-slate-200/60">
+          <div
+            className={`h-full transition-all duration-300 ${allDone ? 'bg-teal-600' : 'bg-amber-500'}`}
+            style={{ width: `${pct}%` }}
+          />
+        </div>
+
+        <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           {items.map((item) => (
-            <li key={item.label} className="flex items-center gap-2.5 text-sm">
+            <li
+              key={item.label}
+              className="flex items-center gap-2 rounded-lg border border-slate-200/80 bg-white px-3 py-2 text-xs"
+            >
               <span
                 aria-hidden
-                className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full border ${
-                  item.done ? 'border-verified bg-verified' : 'border-amber bg-transparent'
+                className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[10px] font-bold ${
+                  item.done ? 'bg-teal-600 text-white' : 'bg-amber-100 text-amber-800 border border-amber-300'
                 }`}
               >
-                {item.done && (
-                  <svg
-                    viewBox="0 0 12 12"
-                    className="h-2 w-2 text-paper"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path d="M2.5 6.2 5 8.7 9.5 3.3" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                )}
+                {item.done ? '✓' : '!'}
               </span>
-              <span className={item.done ? 'text-slate' : 'font-semibold text-ink'}>
+              <span className={item.done ? 'text-slate-600' : 'font-semibold text-slate-900'}>
                 {item.label}
               </span>
             </li>

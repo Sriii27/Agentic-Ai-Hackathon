@@ -1,3 +1,6 @@
+'use client';
+
+import { useState } from 'react';
 import { Card, CardBody, CardHeader } from './ui/Card';
 import { Badge } from './ui/Badge';
 import { VerificationStamp } from './VerificationStamp';
@@ -11,75 +14,84 @@ export function LoanOffers({
   offers: LoanOffer[];
   recommendedOffer: RecommendedOffer;
 }) {
+  const [selectedLender, setSelectedLender] = useState<string | null>(null);
+
   return (
     <Card>
-      <CardHeader
-        title="Financing Options"
-        subtitle="Offers to help cover any amount insurance doesn't"
-      />
-      <CardBody>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <CardHeader title="Financing Options" />
+      <CardBody className="space-y-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {offers.map((offer) => {
             const isRecommended =
               !offer.flagged && offer.lenderName === recommendedOffer.lenderName;
+            const isSelected = selectedLender === offer.lenderName;
 
             return (
               <div
                 key={offer.lenderName}
-                className={`rounded-lg border-2 p-4 ${
+                className={`flex flex-col justify-between rounded-xl border p-4 transition-all ${
                   offer.flagged
-                    ? 'border-amber bg-amber-tint'
+                    ? 'border-amber-300 bg-amber-50/50'
                     : isRecommended
-                      ? 'border-verified bg-verified-tint'
-                      : 'border-hairline bg-paper-raised'
+                      ? 'border-teal-500 bg-teal-50/40'
+                      : 'border-slate-200 bg-white'
                 }`}
               >
-                <div className="flex items-start justify-between gap-2">
-                  <p className="text-sm font-semibold text-ink">
-                    {offer.lenderName}
-                  </p>
-                  {offer.flagged && <Badge tone="amber">Flagged</Badge>}
-                  {isRecommended && <Badge tone="verified">Recommended</Badge>}
+                <div>
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="text-sm font-bold text-slate-900">{offer.lenderName}</p>
+                    {offer.flagged && <Badge tone="amber" className="text-[10px]">Flagged</Badge>}
+                    {isRecommended && <Badge tone="verified" className="text-[10px] bg-teal-600 text-white border-0">Recommended</Badge>}
+                  </div>
+
+                  <div className="mt-3 flex items-center justify-between rounded-lg bg-slate-50 p-2.5 text-xs">
+                    <div>
+                      <span className="text-slate-400 text-[10px] uppercase font-bold">APR</span>
+                      <p className={`font-mono font-bold ${offer.flagged ? 'text-amber-700' : 'text-teal-700'}`}>
+                        {offer.apr}%
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-slate-400 text-[10px] uppercase font-bold">Amount</span>
+                      <p className="font-mono font-bold text-slate-900">
+                        {formatCurrency(offer.amount)}
+                      </p>
+                    </div>
+                  </div>
+
+                  {offer.flagged && offer.flagReason && (
+                    <p className="mt-2 text-[11px] text-amber-900">⚠️ {offer.flagReason}</p>
+                  )}
+
+                  <div className="mt-2">
+                    {offer.flagged ? (
+                      <VerificationStamp status="pending" compact />
+                    ) : (
+                      <VerificationStamp
+                        status="verified"
+                        verb="Verified"
+                        label={isRecommended ? 'lowest cost' : 'terms'}
+                        compact
+                      />
+                    )}
+                  </div>
                 </div>
 
-                <dl className="mt-4 space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <dt className="text-slate">APR</dt>
-                    <dd
-                      className={`font-mono font-medium ${offer.flagged ? 'text-amber' : 'text-ink'}`}
-                    >
-                      {offer.apr}%
-                    </dd>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <dt className="text-slate">Amount</dt>
-                    <dd className="font-mono font-medium text-ink">
-                      {formatCurrency(offer.amount)}
-                    </dd>
-                  </div>
-                </dl>
-
-                {offer.flagged && offer.flagReason && (
-                  <p className="mt-4 text-xs text-amber/90">{offer.flagReason}</p>
-                )}
-
                 <div className="mt-4">
-                  {offer.flagged ? (
-                    <VerificationStamp status="pending" compact />
-                  ) : isRecommended ? (
-                    <VerificationStamp
-                      status="verified"
-                      verb="Verified"
-                      label="lowest true cost"
-                      compact
-                    />
-                  ) : (
-                    <VerificationStamp
-                      status="verified"
-                      verb="Cross-checked"
-                      label="lender disclosure sheet"
-                      compact
-                    />
+                  {!offer.flagged && (
+                    <button
+                      type="button"
+                      onClick={() => setSelectedLender(offer.lenderName)}
+                      className={`w-full rounded-lg py-1.5 px-3 text-xs font-semibold transition-all ${
+                        isSelected
+                          ? 'bg-teal-700 text-white'
+                          : isRecommended
+                            ? 'bg-teal-600 text-white hover:bg-teal-700'
+                            : 'border border-slate-200 bg-slate-100 text-slate-700 hover:bg-slate-200'
+                      }`}
+                    >
+                      {isSelected ? '✓ Selected' : 'Select Plan'}
+                    </button>
                   )}
                 </div>
               </div>

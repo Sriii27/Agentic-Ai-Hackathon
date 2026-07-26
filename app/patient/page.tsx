@@ -22,17 +22,30 @@ import { ReportIssueModal } from '@/components/ReportIssueModal';
 import { VerificationStamp } from '@/components/VerificationStamp';
 import { StateCard } from '@/components/StateCard';
 import { formatDateTime } from '@/lib/utils';
+import { ProtectedPage } from '@/components/ProtectedPage';
 
-export default function PatientPage() {
+type ActiveSectionTab = 'overview' | 'coverage' | 'documents' | 'financing';
+
+function PatientContent() {
   const { caseData, loading, error } = useCase();
   const [uploadedDocs, setUploadedDocs] = useState<DocumentId[]>([]);
+  const [activeTab, setActiveTab] = useState<ActiveSectionTab>('overview');
+  const [activeStepperStage, setActiveStepperStage] = useState<number | undefined>(undefined);
 
   const stage = deriveStage(caseData?.claimStatus);
+
+  function handleStepperStageSelect(stageNumber: number) {
+    setActiveStepperStage(stageNumber);
+    if (stageNumber === 1) setActiveTab('documents');
+    else if (stageNumber === 2) setActiveTab('coverage');
+    else if (stageNumber === 3) setActiveTab('overview');
+    else if (stageNumber === 4) setActiveTab('financing');
+  }
 
   const timeline = caseData ? (
     <TimelineRail events={caseData.timeline} />
   ) : (
-    <TimelineRailEmpty message="No case yet — start by entering patient details from the Hospital view." />
+    <TimelineRailEmpty message="No case loaded — start by submitting details in Hospital view." />
   );
 
   const rightRail = caseData ? (
@@ -55,22 +68,18 @@ export default function PatientPage() {
       <ComparisonTray />
     </>
   ) : (
-    <div className="cm-card-note space-y-3">
-      <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate">
-        Verification
+    <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs space-y-3">
+      <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+        Verification Panel
+      </h2>
+      <p className="text-xs text-slate-500 leading-relaxed">
+        Verified source stamps and policy comparison tools render automatically once a case is submitted.
       </p>
-      <p className="text-sm text-slate">
-        Verified stamps and side-by-side policy comparisons appear after a hospital submits a case.
-      </p>
-      <Link href="/hospital" className="cm-button">
-        Go to Hospital view
-      </Link>
     </div>
   );
 
   const documentsComplete = uploadedDocs.length === DOCUMENT_IDS.length;
 
-  // Find the patient consent event from the timeline
   const consentEvent = caseData?.timeline.find(
     (e) => e.actor === 'patient' || e.event.toLowerCase().includes('consent')
   );
@@ -79,32 +88,33 @@ export default function PatientPage() {
     <CaseFileShell
       role="Patient"
       roleTone="verified"
-      stepper={<CaseStatusStepper stage={stage} />}
+      stepper={
+        <CaseStatusStepper
+          stage={stage}
+          activeSelectedStage={activeStepperStage}
+          onSelectStage={handleStepperStageSelect}
+        />
+      }
       notification={<CaseNotificationBanner />}
       timeline={timeline}
       right={rightRail}
     >
       {loading && !caseData && !error && (
-        <StateCard title="Loading case…" description="Pulling the latest case record." />
+        <StateCard title="Loading Case…" description="Fetching latest case record from the shared ledger." />
       )}
 
       {error && (
         <StateCard
           tone="amber"
-          title="Case not found"
+          title="Case Not Found"
           description={error}
         />
       )}
 
       {!loading && !error && !caseData && (
         <StateCard
-          title="No case yet"
-          description="Start by entering patient details from the Hospital view."
-          action={
-            <Link href="/hospital" className="cm-button">
-              Open Hospital view
-            </Link>
-          }
+          title="No Active Case Loaded"
+          description="Submit patient details from the Hospital view to explore the live shared record."
         />
       )}
 
@@ -112,74 +122,172 @@ export default function PatientPage() {
         <>
           <CaseSummaryHeader caseData={caseData} action={<PrintButton />} />
 
-          {/* Consent record — visible signed-on line for the patient */}
-          <div className="rounded-lg border border-hairline border-l-4 border-l-verified bg-paper-raised p-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate">
-              Consent Record
-            </p>
-            <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <div>
-                <p className="text-xs font-medium uppercase tracking-wide text-slate">Patient</p>
-                <p className="mt-0.5 text-sm text-ink">{caseData.patientName}</p>
-              </div>
-              <div>
-                <p className="text-xs font-medium uppercase tracking-wide text-slate">Consent granted</p>
-                <p className="mt-0.5 font-mono text-sm text-ink">
-                  {consentEvent ? formatDateTime(consentEvent.timestamp) : formatDateTime(caseData.submittedAt)}
-                </p>
-              </div>
-              <div className="sm:col-span-2">
-                <p className="text-xs font-medium uppercase tracking-wide text-slate">Scope</p>
-                <p className="mt-0.5 text-sm text-slate">
-                  Patient authorised sharing of medical records and cost estimate with{' '}
-                  {caseData.coverageExplainer.networkStatus !== 'unknown'
-                    ? 'the listed insurer'
-                    : 'the insurer on record'}{' '}
-                  for the purpose of this claim.
-                </p>
-              </div>
-            </div>
-            <div className="mt-3">
-              <VerificationStamp status="verified" verb="Verified" label="patient authorisation on file" compact />
-            </div>
+          {/* Clean Section Navigation Tabs */}
+          <div className="flex items-center gap-1.5 overflow-x-auto rounded-2xl border border-slate-200 bg-white p-1.5 shadow-2xs">
+            <button
+              type="button"
+              onClick={() => {
+                setActiveTab('overview');
+                setActiveStepperStage(3);
+              }}
+              className={`flex-1 min-w-max rounded-xl px-4 py-2 text-xs font-bold transition-all ${
+                activeTab === 'overview'
+                  ? 'bg-teal-600 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+              }`}
+            >
+              📊 Overview & Cost Breakdown
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setActiveTab('coverage');
+                setActiveStepperStage(2);
+              }}
+              className={`flex-1 min-w-max rounded-xl px-4 py-2 text-xs font-bold transition-all ${
+                activeTab === 'coverage'
+                  ? 'bg-teal-600 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+              }`}
+            >
+              🛡️ Policy & Exclusions
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setActiveTab('documents');
+                setActiveStepperStage(1);
+              }}
+              className={`flex-1 min-w-max rounded-xl px-4 py-2 text-xs font-bold transition-all ${
+                activeTab === 'documents'
+                  ? 'bg-teal-600 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+              }`}
+            >
+              📁 Documents & Consent ({uploadedDocs.length}/{DOCUMENT_IDS.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setActiveTab('financing');
+                setActiveStepperStage(4);
+              }}
+              className={`flex-1 min-w-max rounded-xl px-4 py-2 text-xs font-bold transition-all ${
+                activeTab === 'financing'
+                  ? 'bg-teal-600 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+              }`}
+            >
+              💳 Payment Plans
+            </button>
           </div>
 
-          <CompletenessChecklist
-            items={[
-              { label: 'All required documents uploaded', done: documentsComplete },
-              { label: 'Patient consent recorded', done: true },
-              {
-                label: 'No unresolved objectivity flags',
-                done: caseData.objectivityReport.flags.length === 0,
-              },
-              {
-                label: 'Insurance provider details confirmed',
-                done: caseData.coverageExplainer.networkStatus !== 'unknown',
-              },
-            ]}
-          />
+          {/* Section 1: Overview & Cost Ledger */}
+          {activeTab === 'overview' && (
+            <div className="space-y-6 animate-route-in">
+              <Ledger
+                hospitalEstimate={caseData.hospitalEstimate}
+                insurerApproved={caseData.insurerApproved}
+                gap={caseData.gap}
+                claimStatus={caseData.claimStatus}
+              />
 
-          <Ledger
-            hospitalEstimate={caseData.hospitalEstimate}
-            insurerApproved={caseData.insurerApproved}
-            gap={caseData.gap}
-            claimStatus={caseData.claimStatus}
-          />
+              <CompletenessChecklist
+                items={[
+                  { label: 'All required documents uploaded', done: documentsComplete },
+                  { label: 'Patient consent recorded', done: true },
+                  {
+                    label: 'No unresolved objectivity flags',
+                    done: caseData.objectivityReport.flags.length === 0,
+                  },
+                  {
+                    label: 'Insurance provider details confirmed',
+                    done: caseData.coverageExplainer.networkStatus !== 'unknown',
+                  },
+                ]}
+              />
 
-          <CoverageExplainerCard coverageExplainer={caseData.coverageExplainer} />
+              <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white p-4">
+                <div className="text-xs">
+                  <p className="font-bold text-slate-900">Need help or wish to dispute a finding?</p>
+                  <p className="text-slate-500">Report an issue directly to the insurer and grievance officer.</p>
+                </div>
+                <ReportIssueModal caseId={caseData.caseId} />
+              </div>
+            </div>
+          )}
 
-          <LoanOffers
-            offers={caseData.loanOffers}
-            recommendedOffer={caseData.recommendedOffer}
-          />
+          {/* Section 2: Policy Coverage */}
+          {activeTab === 'coverage' && (
+            <div className="space-y-6 animate-route-in">
+              <CoverageExplainerCard coverageExplainer={caseData.coverageExplainer} />
+            </div>
+          )}
 
-          <DocumentChecklist caseId={caseData.caseId} onChange={setUploadedDocs} />
+          {/* Section 3: Documents & Consent */}
+          {activeTab === 'documents' && (
+            <div className="space-y-6 animate-route-in">
+              {/* Consent Record Card */}
+              <div className="rounded-2xl border border-teal-200 bg-white p-5 shadow-xs">
+                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                  <div>
+                    <h2 className="text-xs font-bold uppercase tracking-wider text-teal-800">
+                      Consent Record
+                    </h2>
+                    <p className="text-xs text-slate-500 font-medium">Digital authorization on record</p>
+                  </div>
+                  <VerificationStamp status="verified" verb="Verified" label="patient authorization on file" compact />
+                </div>
 
-          <div className="no-print">
-            <ReportIssueModal caseId={caseData.caseId} />
-          </div>
+                <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div>
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Authorized By</p>
+                    <p className="mt-0.5 text-sm font-semibold text-slate-900">{caseData.patientName}</p>
+                  </div>
+                  <div>
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Timestamp</p>
+                    <p className="mt-0.5 font-mono text-xs font-semibold text-slate-800">
+                      {consentEvent ? formatDateTime(consentEvent.timestamp) : formatDateTime(caseData.submittedAt)}
+                    </p>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Scope of Sharing</p>
+                    <p className="mt-0.5 text-xs text-slate-600 leading-relaxed">
+                      Patient authorized sharing medical records, cost estimates, and billing details with{' '}
+                      <strong className="text-slate-800">
+                        {caseData.coverageExplainer.networkStatus !== 'unknown'
+                          ? 'the listed insurer'
+                          : 'the insurer on record'}
+                      </strong>{' '}
+                      for processing this claim.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <DocumentChecklist caseId={caseData.caseId} onChange={setUploadedDocs} />
+            </div>
+          )}
+
+          {/* Section 4: Financing & Payment Plans */}
+          {activeTab === 'financing' && (
+            <div className="space-y-6 animate-route-in">
+              <LoanOffers
+                offers={caseData.loanOffers}
+                recommendedOffer={caseData.recommendedOffer}
+              />
+            </div>
+          )}
         </>
       )}
     </CaseFileShell>
+  );
+}
+
+export default function PatientPage() {
+  return (
+    <ProtectedPage requiredRole="patient">
+      <PatientContent />
+    </ProtectedPage>
   );
 }

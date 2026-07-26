@@ -35,8 +35,6 @@ export function ReportIssueModal({ caseId }: { caseId: string }) {
     setSubmitError(null);
     try {
       await reportIssue(caseId, issueType, description);
-      // The backend appends a timeline event for this — pull the fresh
-      // case so the shared timeline reflects it immediately.
       const updated = await getCase(caseId);
       applyCaseUpdate(updated);
       setSubmitted(true);
@@ -52,59 +50,61 @@ export function ReportIssueModal({ caseId }: { caseId: string }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="cm-button"
+        className="cm-button text-xs"
       >
-        Report an issue
+        ⚠️ Report an Issue
       </button>
 
       {open && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 px-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-xs animate-route-in"
           role="dialog"
           aria-modal="true"
           aria-labelledby="report-issue-heading"
           onClick={close}
         >
           <div
-            className="w-full max-w-md rounded-lg border border-hairline bg-paper-raised"
+            className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
             {submitted ? (
-              <div className="p-6 text-center">
-                <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-verified-tint">
-                  <span className="text-verified">✓</span>
+              <div className="py-4 text-center">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-teal-100 text-teal-700 text-xl font-bold">
+                  ✓
                 </div>
-                <h3 className="mt-3 text-base font-semibold text-ink">
-                  Issue reported
+                <h3 className="mt-3 text-lg font-bold text-slate-900">
+                  Issue Report Logged
                 </h3>
-                <p className="mt-1 text-sm text-slate">
-                  Logged against this case and added to the shared timeline —
-                  the insurer will see it too.
+                <p className="mt-2 text-xs text-slate-600 leading-relaxed">
+                  Recorded against case <span className="font-mono font-bold text-slate-800">{caseId}</span> and appended to the shared timeline for all parties.
                 </p>
                 <button
                   type="button"
                   onClick={close}
-                  className="cm-button cm-button-primary mt-6"
+                  className="cm-button cm-button-primary mt-6 w-full py-2.5 text-xs font-semibold"
                 >
-                  Close
+                  Done
                 </button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="p-6">
-                <h3 id="report-issue-heading" className="text-base font-semibold text-ink">
-                  Report an issue
-                </h3>
-                <p className="mt-1 text-sm text-slate">
-                  Case <span className="font-mono">{caseId}</span> — this goes
-                  to the insurer&apos;s case queue.
-                </p>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <h3 id="report-issue-heading" className="text-lg font-bold text-slate-900">
+                    Report a Case Issue
+                  </h3>
+                  <p className="mt-0.5 text-xs text-slate-500">
+                    Case <span className="font-mono font-semibold">{caseId}</span> — logged to the shared case timeline.
+                  </p>
+                </div>
 
-                <label className="mt-4 block text-sm font-medium text-ink">
-                  Issue type
+                <div>
+                  <label className="block text-xs font-semibold text-slate-800">
+                    Issue Category
+                  </label>
                   <select
                     value={issueType}
                     onChange={(e) => setIssueType(e.target.value)}
-                    className="cm-field"
+                    className="cm-field text-xs"
                   >
                     {ISSUE_TYPES.map((type) => (
                       <option key={type} value={type}>
@@ -112,36 +112,38 @@ export function ReportIssueModal({ caseId }: { caseId: string }) {
                       </option>
                     ))}
                   </select>
-                </label>
+                </div>
 
-                <label className="mt-4 block text-sm font-medium text-ink">
-                  Description
+                <div>
+                  <label className="block text-xs font-semibold text-slate-800">
+                    Description of Discrepancy
+                  </label>
                   <textarea
                     required
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     rows={4}
-                    placeholder="Describe what looks wrong..."
-                    className="cm-field"
+                    placeholder="Describe what looks incorrect or requires escalation..."
+                    className="cm-field text-xs"
                   />
-                </label>
+                </div>
 
-                {submitError && <p className="mt-3 text-xs text-amber">{submitError}</p>}
+                {submitError && <p className="text-xs text-amber-600">⚠️ {submitError}</p>}
 
-                <div className="mt-6 flex justify-end gap-3">
+                <div className="mt-6 flex justify-end gap-3 pt-2">
                   <button
                     type="button"
                     onClick={close}
-                    className="cm-button"
+                    className="cm-button text-xs py-2"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="cm-button cm-button-primary"
+                    className="cm-button cm-button-primary text-xs py-2 disabled:opacity-60"
                   >
-                    {submitting ? 'Submitting…' : 'Submit'}
+                    {submitting ? 'Submitting…' : 'Submit Issue'}
                   </button>
                 </div>
               </form>
