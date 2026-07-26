@@ -1,0 +1,454 @@
+{
+  "clean-case": {
+    "caseId": "clean-case",
+    "patientName": "Meera Nair",
+    "hospitalName": "Sunrise General Hospital",
+    "procedure": "Laparoscopic Appendectomy",
+    "submittedAt": "2026-07-18T09:15:00.000Z",
+    "hospitalEstimate": 185000,
+    "insurerApproved": 185000,
+    "gap": 0,
+    "claimStatus": "approved",
+    "objectivityReport": {
+      "summary": "Submission is consistent across hospital records, diagnosis codes, and policy terms. No discrepancies found.",
+      "flags": []
+    },
+    "coverageExplainer": {
+      "covered": true,
+      "coverageLimit": 500000,
+      "waitingPeriodCleared": true,
+      "exclusionsApplicable": [],
+      "networkStatus": "in-network"
+    },
+    "loanOffers": [
+      {
+        "lenderName": "Suraksha Health Finance",
+        "apr": 8.9,
+        "amount": 0
+      }
+    ],
+    "recommendedOffer": {
+      "lenderName": "Suraksha Health Finance",
+      "apr": 8.9,
+      "amount": 0
+    },
+    "timeline": [
+      {
+        "timestamp": "2026-07-18T09:15:00.000Z",
+        "actor": "hospital",
+        "event": "Case submitted with patient history and cost estimate."
+      },
+      {
+        "timestamp": "2026-07-18T09:16:00.000Z",
+        "actor": "system",
+        "event": "Objectivity check completed — no inconsistencies found."
+      },
+      {
+        "timestamp": "2026-07-18T11:40:00.000Z",
+        "actor": "insurer",
+        "event": "Claim reviewed against policy terms."
+      },
+      {
+        "timestamp": "2026-07-18T13:05:00.000Z",
+        "actor": "insurer",
+        "event": "Claim approved for full estimated amount."
+      },
+      {
+        "timestamp": "2026-07-18T13:10:00.000Z",
+        "actor": "system",
+        "event": "Patient notified of approval."
+      },
+      {
+        "timestamp": "2026-07-26T02:42:15.324Z",
+        "actor": "patient",
+        "event": "Reported an issue: Billing discrepancy."
+      },
+      {
+        "timestamp": "2026-07-26T02:42:20.709Z",
+        "actor": "insurer",
+        "event": "Insurer approved the claim in full."
+      },
+      {
+        "timestamp": "2026-07-26T02:43:01.873Z",
+        "actor": "patient",
+        "event": "Reported an issue: Billing discrepancy."
+      },
+      {
+        "timestamp": "2026-07-26T02:43:07.100Z",
+        "actor": "insurer",
+        "event": "Insurer approved the claim in full."
+      }
+    ]
+  },
+  "gotcha-case": {
+    "caseId": "gotcha-case",
+    "patientName": "Arjun Verma",
+    "hospitalName": "Lakeside Multispecialty Hospital",
+    "procedure": "Arthroscopic Knee Surgery",
+    "submittedAt": "2026-07-20T07:30:00.000Z",
+    "hospitalEstimate": 420000,
+    "insurerApproved": 260000,
+    "gap": 160000,
+    "claimStatus": "partial",
+    "denialReason": "Approved amount set to ₹2,60,000.",
+    "objectivityReport": {
+      "summary": "Submission has inconsistencies that were flagged before reaching the insurer. Review recommended before treating the approved amount as final.",
+      "flags": [
+        "Treatment code does not match diagnosis entered on the intake form.",
+        "Hospital estimate is 61% higher than the median cost for this procedure at in-network facilities."
+      ]
+    },
+    "coverageExplainer": {
+      "covered": true,
+      "coverageLimit": 300000,
+      "waitingPeriodCleared": false,
+      "exclusionsApplicable": [
+        "Pre-existing knee condition (24-month waiting period applies)",
+        "Cosmetic or elective add-ons to the procedure"
+      ],
+      "networkStatus": "in-network"
+    },
+    "loanOffers": [
+      {
+        "lenderName": "QuickCash Medical Credit",
+        "apr": 34.99,
+        "amount": 160000,
+        "flagged": true,
+        "flagReason": "APR is significantly above market average for medical financing and includes a prepayment penalty."
+      },
+      {
+        "lenderName": "Suraksha Health Finance",
+        "apr": 10.75,
+        "amount": 160000
+      }
+    ],
+    "recommendedOffer": {
+      "lenderName": "Suraksha Health Finance",
+      "apr": 10.75,
+      "amount": 160000
+    },
+    "timeline": [
+      {
+        "timestamp": "2026-07-20T07:30:00.000Z",
+        "actor": "hospital",
+        "event": "Case submitted with patient history and cost estimate."
+      },
+      {
+        "timestamp": "2026-07-20T07:32:00.000Z",
+        "actor": "system",
+        "event": "Objectivity check flagged 2 issues: mismatched treatment code and above-median cost estimate."
+      },
+      {
+        "timestamp": "2026-07-20T10:05:00.000Z",
+        "actor": "insurer",
+        "event": "Claim reviewed against policy terms and waiting period."
+      },
+      {
+        "timestamp": "2026-07-20T12:20:00.000Z",
+        "actor": "insurer",
+        "event": "Claim partially approved — pre-existing condition waiting period not yet cleared."
+      },
+      {
+        "timestamp": "2026-07-20T12:25:00.000Z",
+        "actor": "system",
+        "event": "Financing options generated to cover the remaining gap."
+      },
+      {
+        "timestamp": "2026-07-20T12:26:00.000Z",
+        "actor": "system",
+        "event": "One financing offer flagged for predatory APR."
+      },
+      {
+        "timestamp": "2026-07-26T02:43:12.394Z",
+        "actor": "insurer",
+        "event": "Insurer denied the claim. Reason: \"Automated audit denial reason.\""
+      },
+      {
+        "timestamp": "2026-07-26T02:44:34.631Z",
+        "actor": "insurer",
+        "event": "Insurer partially approved the claim. Note: \"Approved amount set to ₹2,60,000.\""
+      },
+      {
+        "timestamp": "2026-07-26T02:45:34.631Z",
+        "actor": "system",
+        "event": "Financing options generated to cover the remaining gap."
+      },
+      {
+        "timestamp": "2026-07-26T02:46:34.631Z",
+        "actor": "system",
+        "event": "One financing offer flagged for predatory APR."
+      }
+    ]
+  },
+  "CM-16QFXN": {
+    "caseId": "CM-16QFXN",
+    "patientName": "Meera Nair",
+    "hospitalName": "Sunrise General Hospital",
+    "procedure": "Laparoscopic Appendectomy (ICD-10 K35.80 / CPT 44970)",
+    "submittedAt": "2026-07-26T02:34:53.099Z",
+    "hospitalEstimate": 185000,
+    "insurerApproved": 0,
+    "gap": 185000,
+    "claimStatus": "pending",
+    "objectivityReport": {
+      "summary": "Submission is consistent across hospital records, diagnosis codes, and policy terms. No discrepancies found.",
+      "flags": []
+    },
+    "coverageExplainer": {
+      "covered": true,
+      "coverageLimit": 500000,
+      "waitingPeriodCleared": true,
+      "exclusionsApplicable": [],
+      "networkStatus": "in-network"
+    },
+    "loanOffers": [],
+    "recommendedOffer": {
+      "lenderName": "Suraksha Health Finance",
+      "apr": 8.9,
+      "amount": 0
+    },
+    "timeline": [
+      {
+        "timestamp": "2026-07-26T02:34:53.099Z",
+        "actor": "patient",
+        "event": "Patient authorised sharing this case with Star Health Insurance."
+      },
+      {
+        "timestamp": "2026-07-26T02:35:53.099Z",
+        "actor": "hospital",
+        "event": "Case submitted with patient history and cost estimate."
+      },
+      {
+        "timestamp": "2026-07-26T02:34:53.116Z",
+        "actor": "system",
+        "event": "Objectivity check completed — no inconsistencies found."
+      }
+    ],
+    "patientHistory": "Patient ID: AADHAAR-8839-4412 | Policy: POL-STAR-44912\nPatient presented with acute right lower quadrant abdominal pain, fever (38.5°C), and elevated WBC. Ultrasound confirmed acute appendicitis."
+  },
+  "CM-16WUM6": {
+    "caseId": "CM-16WUM6",
+    "patientName": "Meera Nair",
+    "hospitalName": "Sunrise General Hospital",
+    "procedure": "Laparoscopic Appendectomy (ICD-10 K35.80 / CPT 44970)",
+    "submittedAt": "2026-07-26T02:39:52.062Z",
+    "hospitalEstimate": 185000,
+    "insurerApproved": 0,
+    "gap": 185000,
+    "claimStatus": "pending",
+    "objectivityReport": {
+      "summary": "Submission is consistent across hospital records, diagnosis codes, and policy terms. No discrepancies found.",
+      "flags": []
+    },
+    "coverageExplainer": {
+      "covered": true,
+      "coverageLimit": 500000,
+      "waitingPeriodCleared": true,
+      "exclusionsApplicable": [],
+      "networkStatus": "in-network"
+    },
+    "loanOffers": [],
+    "recommendedOffer": {
+      "lenderName": "Suraksha Health Finance",
+      "apr": 8.9,
+      "amount": 0
+    },
+    "timeline": [
+      {
+        "timestamp": "2026-07-26T02:39:52.062Z",
+        "actor": "patient",
+        "event": "Patient authorised sharing this case with Star Health Insurance."
+      },
+      {
+        "timestamp": "2026-07-26T02:40:52.062Z",
+        "actor": "hospital",
+        "event": "Case submitted with patient history and cost estimate."
+      },
+      {
+        "timestamp": "2026-07-26T02:39:52.081Z",
+        "actor": "system",
+        "event": "Objectivity check completed — no inconsistencies found."
+      }
+    ],
+    "patientHistory": "Patient ID: AADHAAR-8839-4412 | Policy: POL-STAR-44912\nPatient presented with acute right lower quadrant abdominal pain, fever (38.5°C), and elevated WBC. Ultrasound confirmed acute appendicitis."
+  },
+  "CM-186Z2D": {
+    "caseId": "CM-186Z2D",
+    "patientName": "Meera Nair",
+    "hospitalName": "Sunrise General Hospital",
+    "procedure": "Laparoscopic Appendectomy (ICD-10 K35.80 / CPT 44970)",
+    "submittedAt": "2026-07-26T03:15:44.005Z",
+    "hospitalEstimate": 185000,
+    "insurerApproved": 0,
+    "gap": 185000,
+    "claimStatus": "pending",
+    "objectivityReport": {
+      "summary": "Submission is consistent across hospital records, diagnosis codes, and policy terms. No discrepancies found.",
+      "flags": []
+    },
+    "coverageExplainer": {
+      "covered": true,
+      "coverageLimit": 500000,
+      "waitingPeriodCleared": true,
+      "exclusionsApplicable": [],
+      "networkStatus": "in-network"
+    },
+    "loanOffers": [],
+    "recommendedOffer": {
+      "lenderName": "Suraksha Health Finance",
+      "apr": 8.9,
+      "amount": 0
+    },
+    "timeline": [
+      {
+        "timestamp": "2026-07-26T03:15:44.005Z",
+        "actor": "patient",
+        "event": "Patient authorised sharing this case with Star Health Insurance."
+      },
+      {
+        "timestamp": "2026-07-26T03:16:44.005Z",
+        "actor": "hospital",
+        "event": "Case submitted with patient history and cost estimate."
+      },
+      {
+        "timestamp": "2026-07-26T03:15:44.025Z",
+        "actor": "system",
+        "event": "Objectivity check completed — no inconsistencies found."
+      }
+    ],
+    "patientHistory": "Patient ID: AADHAAR-8839-4412 | Policy: POL-STAR-44912\nPatient presented with acute right lower quadrant abdominal pain, fever (38.5°C), and elevated WBC. Ultrasound confirmed acute appendicitis."
+  },
+  "CM-18975L": {
+    "caseId": "CM-18975L",
+    "patientName": "Meera Nair",
+    "hospitalName": "Sunrise General Hospital",
+    "procedure": "Laparoscopic Appendectomy (ICD-10 K35.80 / CPT 44970)",
+    "submittedAt": "2026-07-26T03:17:27.801Z",
+    "hospitalEstimate": 185000,
+    "insurerApproved": 0,
+    "gap": 185000,
+    "claimStatus": "pending",
+    "objectivityReport": {
+      "summary": "Submission is consistent across hospital records, diagnosis codes, and policy terms. No discrepancies found.",
+      "flags": []
+    },
+    "coverageExplainer": {
+      "covered": true,
+      "coverageLimit": 500000,
+      "waitingPeriodCleared": true,
+      "exclusionsApplicable": [],
+      "networkStatus": "in-network"
+    },
+    "loanOffers": [],
+    "recommendedOffer": {
+      "lenderName": "Suraksha Health Finance",
+      "apr": 8.9,
+      "amount": 0
+    },
+    "timeline": [
+      {
+        "timestamp": "2026-07-26T03:17:27.801Z",
+        "actor": "patient",
+        "event": "Patient authorised sharing this case with Star Health Insurance."
+      },
+      {
+        "timestamp": "2026-07-26T03:18:27.801Z",
+        "actor": "hospital",
+        "event": "Case submitted with patient history and cost estimate."
+      },
+      {
+        "timestamp": "2026-07-26T03:17:27.816Z",
+        "actor": "system",
+        "event": "Objectivity check completed — no inconsistencies found."
+      }
+    ],
+    "patientHistory": "Patient ID: AADHAAR-8839-4412 | Policy: POL-STAR-44912\nPatient presented with acute right lower quadrant abdominal pain, fever (38.5°C), and elevated WBC. Ultrasound confirmed acute appendicitis."
+  },
+  "CM-1ATQTV": {
+    "caseId": "CM-1ATQTV",
+    "patientName": "Meera Nair",
+    "hospitalName": "Sunrise General Hospital",
+    "procedure": "Laparoscopic Appendectomy (ICD-10 K35.80 / CPT 44970)",
+    "submittedAt": "2026-07-26T04:29:25.651Z",
+    "hospitalEstimate": 185000,
+    "insurerApproved": 0,
+    "gap": 185000,
+    "claimStatus": "pending",
+    "objectivityReport": {
+      "summary": "Submission is consistent across hospital records, diagnosis codes, and policy terms. No discrepancies found.",
+      "flags": []
+    },
+    "coverageExplainer": {
+      "covered": true,
+      "coverageLimit": 500000,
+      "waitingPeriodCleared": true,
+      "exclusionsApplicable": [],
+      "networkStatus": "in-network"
+    },
+    "loanOffers": [],
+    "recommendedOffer": {
+      "lenderName": "Suraksha Health Finance",
+      "apr": 8.9,
+      "amount": 0
+    },
+    "timeline": [
+      {
+        "timestamp": "2026-07-26T04:29:25.651Z",
+        "actor": "patient",
+        "event": "Patient authorised sharing this case with Star Health Insurance."
+      },
+      {
+        "timestamp": "2026-07-26T04:30:25.651Z",
+        "actor": "hospital",
+        "event": "Case submitted with patient history and cost estimate."
+      },
+      {
+        "timestamp": "2026-07-26T04:29:25.659Z",
+        "actor": "system",
+        "event": "Objectivity check completed — no inconsistencies found."
+      }
+    ],
+    "patientHistory": "Patient ID: AADHAAR-8839-4412 | Policy: POL-STAR-44912\nPatient presented with acute right lower quadrant abdominal pain, fever (38.5°C), and elevated WBC. Ultrasound confirmed acute appendicitis."
+  },
+  "CM-1CUH8A": {
+    "caseId": "CM-1CUH8A",
+    "patientName": "John Doe",
+    "hospitalName": "City Hospital",
+    "procedure": "cardiac bypass",
+    "submittedAt": "2026-07-26T05:25:59.098Z",
+    "hospitalEstimate": 150000,
+    "insurerApproved": 0,
+    "gap": 150000,
+    "claimStatus": "pending",
+    "objectivityReport": {
+      "summary": "Objectivity check queued — results will appear once complete.",
+      "flags": []
+    },
+    "coverageExplainer": {
+      "covered": true,
+      "coverageLimit": 250000,
+      "waitingPeriodCleared": true,
+      "exclusionsApplicable": [],
+      "networkStatus": "unknown"
+    },
+    "loanOffers": [],
+    "recommendedOffer": {
+      "lenderName": "Suraksha Health Finance",
+      "apr": 8.9,
+      "amount": 0
+    },
+    "timeline": [
+      {
+        "timestamp": "2026-07-26T05:25:59.098Z",
+        "actor": "patient",
+        "event": "Patient authorised sharing this case with BlueCross."
+      },
+      {
+        "timestamp": "2026-07-26T05:26:59.098Z",
+        "actor": "hospital",
+        "event": "Case submitted with patient history and cost estimate."
+      }
+    ],
+    "patientHistory": ""
+  }
+}

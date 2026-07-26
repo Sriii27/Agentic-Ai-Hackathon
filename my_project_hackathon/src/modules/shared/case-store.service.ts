@@ -109,6 +109,15 @@ export interface SubmitDecisionInput {
   approvedAmount?: number;
 }
 
+export interface SubmitCaseInput {
+  patientName: string;
+  hospitalName: string;
+  procedure: string;
+  patientHistory?: string;
+  insuranceProvider: string;
+  estimatedCost: number;
+}
+
 async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const url = `${API_BASE}${path}`;
   let res: Response;
@@ -181,5 +190,21 @@ export class CaseStoreService implements OnModuleInit {
     return apiFetch<LiveCaseData>(`/api/cases/${encodeURIComponent(caseId)}/objectivity-check`, {
       method: 'POST',
     });
+  }
+
+  /**
+   * Submit a new hospital case for processing.
+   * Write operation. Maps to `POST /api/cases`.
+   */
+  async createCase(input: SubmitCaseInput): Promise<{ caseId: string; claimStatus: string; hospitalEstimate: number }> {
+    const created = await apiFetch<LiveCaseData>('/api/cases', {
+      method: 'POST',
+      body: JSON.stringify(input),
+    });
+    return {
+      caseId: created.caseId,
+      claimStatus: created.claimStatus,
+      hospitalEstimate: created.hospitalEstimate,
+    };
   }
 }
