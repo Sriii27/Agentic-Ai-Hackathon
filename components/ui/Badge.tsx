@@ -3,10 +3,10 @@ import type { ReactNode } from 'react';
 export type BadgeTone = 'verified' | 'amber' | 'ink' | 'slate';
 
 const TONE_CLASSES: Record<BadgeTone, string> = {
-  verified: 'bg-teal-50 text-teal-800 border border-teal-200',
-  amber: 'bg-amber-50 text-amber-800 border border-amber-200',
-  ink: 'bg-slate-900 text-white border border-slate-900',
-  slate: 'bg-slate-100 text-slate-700 border border-slate-200',
+  verified: 'bg-teal-500/15 text-teal-800 border border-teal-300/50 backdrop-blur-md',
+  amber: 'bg-amber-400/15 text-amber-800 border border-amber-300/50 backdrop-blur-md',
+  ink: 'bg-slate-900/75 text-white border border-white/20 backdrop-blur-md',
+  slate: 'bg-white/40 text-slate-700 border border-white/60 backdrop-blur-md',
 };
 
 export function Badge({

@@ -33,8 +33,8 @@ export function ProtectedPage({
         roleTone={ROLE_TONES[requiredRole]}
         timeline={null}
       >
-        <div className="mx-auto max-w-md rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-xs">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-100 text-amber-800 text-xl font-bold">
+        <div className="glass mx-auto max-w-md rounded-2xl p-8 text-center">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-400/20 backdrop-blur-md text-amber-800 text-xl font-bold">
             🔒
           </div>
           <h2 className="mt-4 text-xl font-extrabold text-slate-900">
@@ -74,7 +74,7 @@ export function ProtectedPage({
         roleTone={ROLE_TONES[requiredRole]}
         timeline={null}
       >
-        <div className="mx-auto max-w-md rounded-2xl border border-amber-300 bg-amber-50/50 p-8 text-center shadow-xs">
+        <div className="mx-auto max-w-md rounded-2xl border border-amber-300/50 bg-amber-400/10 backdrop-blur-xl p-8 text-center shadow-lg shadow-amber-900/5">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500 text-white text-xl font-bold shadow-2xs">
             🚫
           </div>
@@ -97,7 +97,7 @@ export function ProtectedPage({
             </Link>
             <Link
               href={`/login?role=${requiredRole}`}
-              className="cm-button py-2.5 text-xs font-semibold w-full border-amber-300 text-amber-900 hover:bg-amber-100"
+              className="cm-button py-2.5 text-xs font-semibold w-full text-amber-900"
             >
               Switch Account / Login as {ROLE_NAMES[requiredRole]}
             </Link>

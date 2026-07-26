@@ -26,8 +26,8 @@ export function TimelineRail({ events }: { events: TimelineEvent[] }) {
   const ordered = [...events].reverse();
 
   return (
-    <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-xs">
-      <div className="flex items-center justify-between border-b border-slate-100 pb-2.5 mb-3">
+    <div className="glass rounded-2xl p-4">
+      <div className="flex items-center justify-between border-b border-white/40 pb-2.5 mb-3">
         <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">
           Activity Log
         </h2>
@@ -58,7 +58,7 @@ export function TimelineRail({ events }: { events: TimelineEvent[] }) {
 
 export function TimelineRailEmpty({ message }: { message: string }) {
   return (
-    <div className="rounded-2xl border border-dashed border-slate-200 bg-white p-4 text-center">
+    <div className="rounded-2xl border border-dashed border-white/60 bg-white/25 backdrop-blur-md p-4 text-center">
       <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">
         Activity Log
       </h2>

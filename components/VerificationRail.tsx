@@ -9,8 +9,8 @@ export type VerificationRailItem = {
 
 export function VerificationRail({ items }: { items: VerificationRailItem[] }) {
   return (
-    <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-xs">
-      <div className="border-b border-slate-100 pb-2 mb-3">
+    <div className="glass rounded-2xl p-4">
+      <div className="border-b border-white/40 pb-2 mb-3">
         <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">
           Source Verification
         </h2>
@@ -18,7 +18,7 @@ export function VerificationRail({ items }: { items: VerificationRailItem[] }) {
 
       <ul className="space-y-2">
         {items.map((item) => (
-          <li key={item.context} className="rounded-xl border border-slate-100 bg-slate-50/60 p-2.5">
+          <li key={item.context} className="rounded-xl border border-white/50 bg-white/30 backdrop-blur-md p-2.5">
             <p className="text-xs font-bold text-slate-800 mb-1">{item.context}</p>
             <VerificationStamp
               status={item.status}

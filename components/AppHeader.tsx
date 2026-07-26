@@ -19,7 +19,7 @@ export function AppHeader({
   const isHomeActive = pathname === '/';
 
   return (
-    <header className="no-print sticky top-0 z-30 border-b border-slate-200/80 bg-white/90 backdrop-blur-md">
+    <header className="glass-nav no-print sticky top-0 z-30 border-b">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-2.5 sm:px-6">
         
         {/* Brand & Active Case */}
@@ -35,7 +35,7 @@ export function AppHeader({
           </Link>
 
           {caseData && (
-            <div className="hidden md:flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-xs">
+            <div className="glass-soft hidden md:flex items-center gap-2 rounded-full px-2.5 py-0.5 text-xs">
               <span className="font-mono font-bold text-slate-700">{caseData.caseId}</span>
               <span className="text-slate-300">•</span>
               <span className="font-medium text-slate-800 truncate max-w-[120px]">{caseData.patientName}</span>
@@ -47,10 +47,10 @@ export function AppHeader({
         <nav className="flex items-center">
           <Link
             href="/"
-            className={`flex items-center gap-1.5 rounded-xl border border-slate-200 px-3 py-1.5 text-xs font-bold transition-all ${
+            className={`flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-bold transition-all backdrop-blur-md ${
               isHomeActive
-                ? 'bg-slate-900 text-white shadow-2xs'
-                : 'bg-slate-100/80 text-slate-700 hover:bg-slate-200 hover:text-slate-900'
+                ? 'bg-slate-900/80 text-white border-white/10 shadow-2xs'
+                : 'bg-white/40 border-white/60 text-slate-700 hover:bg-white/65 hover:text-slate-900'
             }`}
           >
             <span>🏠</span>
@@ -63,7 +63,7 @@ export function AppHeader({
           {user ? (
             <Link
               href="/"
-              className="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs hover:bg-slate-100 transition-colors"
+              className="glass-soft flex items-center gap-2 rounded-full px-2.5 py-1 text-xs transition-colors"
               title="Click to view user profile / switch role"
             >
               <div className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-900 text-[10px] font-bold text-white">

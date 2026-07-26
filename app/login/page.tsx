@@ -11,7 +11,7 @@ export default function LoginPage() {
   }, [router]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 p-6 text-center text-xs text-slate-500">
+    <div className="flex min-h-screen items-center justify-center p-6 text-center text-xs text-slate-500">
       Redirecting to Login Portal…
     </div>
   );

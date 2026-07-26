@@ -93,8 +93,8 @@ export function ComparisonTray() {
           return (
             <div
               key={policy.id}
-              className={`rounded-lg border transition-colors ${
-                isExpanded ? 'border-ink bg-paper' : 'border-hairline bg-paper-raised'
+              className={`rounded-lg border backdrop-blur-md transition-colors ${
+                isExpanded ? 'border-slate-400/50 bg-white/45' : 'border-white/50 bg-white/30'
               }`}
             >
               {/* Collapsed / header row — always visible */}
@@ -125,7 +125,7 @@ export function ComparisonTray() {
 
               {/* Expanded detail */}
               {isExpanded && (
-                <div className="space-y-4 border-t border-hairline px-4 pb-4 pt-3">
+                <div className="space-y-4 border-t border-white/40 px-4 pb-4 pt-3">
                   {/* Key numbers */}
                   <dl className="grid grid-cols-2 gap-3">
                     <div>

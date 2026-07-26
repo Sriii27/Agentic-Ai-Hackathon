@@ -3,9 +3,8 @@
 import { useState, useRef } from 'react';
 import { useCase } from '@/lib/case-context';
 import { ApiError } from '@/lib/api';
-import { VerificationStamp } from './VerificationStamp';
-import { formatCurrency, formatDateTime } from '@/lib/utils';
-import type { ClaimStatus, DecisionInput } from '@/lib/types';
+import { formatCurrency } from '@/lib/utils';
+import type { DecisionInput } from '@/lib/types';
 
 type ActionMode = null | 'approve-custom' | 'more-info' | 'deny';
 
@@ -89,13 +88,13 @@ export function InsurerActionPanel() {
   const isDecided = caseData.claimStatus === 'approved' || caseData.claimStatus === 'partial';
 
   return (
-    <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-xs">
-      <div className="border-b border-slate-100 pb-2 mb-3 flex items-center justify-between">
+    <div className="glass rounded-2xl p-4">
+      <div className="border-b border-white/40 pb-2 mb-3 flex items-center justify-between">
         <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">
           Insurer Adjudication
         </h2>
         {isDecided && (
-          <span className="text-[10px] font-bold text-teal-700 bg-teal-50 border border-teal-200 px-2 py-0.5 rounded-full">
+          <span className="text-[10px] font-bold text-teal-700 bg-teal-500/15 backdrop-blur-md border border-teal-300/40 px-2 py-0.5 rounded-full">
             ● Decision Recorded
           </span>
         )}
@@ -104,14 +103,14 @@ export function InsurerActionPanel() {
       <div className="space-y-3">
         {/* Approved Summary Card with Re-edit Button */}
         {isDecided && !editingCommitted && mode === null && (
-          <div className="rounded-xl border border-teal-200 bg-teal-50/60 p-3 text-xs space-y-2">
+          <div className="rounded-xl border border-teal-300/40 bg-teal-500/10 backdrop-blur-md p-3 text-xs space-y-2">
             <div className="flex items-center justify-between">
               <span className="font-bold text-teal-900">Approved Amount</span>
               <span className="font-mono text-base font-extrabold text-teal-800">
                 {formatCurrency(caseData.insurerApproved)}
               </span>
             </div>
-            <div className="flex items-center justify-between text-[11px] text-teal-700 pt-1 border-t border-teal-200/60">
+            <div className="flex items-center justify-between text-[11px] text-teal-700 pt-1 border-t border-teal-300/40">
               <span>Patient Gap: {formatCurrency(caseData.gap)}</span>
               <button
                 type="button"
@@ -120,7 +119,7 @@ export function InsurerActionPanel() {
                   setMode('approve-custom');
                   setEditingCommitted(true);
                 }}
-                className="font-bold text-teal-800 hover:underline bg-white px-2 py-0.5 rounded border border-teal-200"
+                className="font-bold text-teal-800 hover:underline bg-white/50 backdrop-blur-md px-2 py-0.5 rounded border border-teal-300/40"
               >
                 ✏️ Edit Amount
               </button>
@@ -129,7 +128,7 @@ export function InsurerActionPanel() {
         )}
 
         {submitError && (
-          <p className="text-xs text-amber-700 bg-amber-50 p-2.5 rounded-xl border border-amber-200">
+          <p className="text-xs text-amber-700 bg-amber-400/10 backdrop-blur-md p-2.5 rounded-xl border border-amber-300/40">
             ⚠️ {submitError}
           </p>
         )}
@@ -168,7 +167,7 @@ export function InsurerActionPanel() {
                 setMode('deny');
                 setTimeout(() => noteRef.current?.focus(), 50);
               }}
-              className="cm-button w-full py-2 text-xs font-semibold border-slate-200 text-slate-700 hover:bg-slate-100 disabled:opacity-60"
+              className="cm-button w-full py-2 text-xs font-semibold text-slate-700 disabled:opacity-60"
             >
               🚫 Deny Claim
             </button>
@@ -177,7 +176,7 @@ export function InsurerActionPanel() {
 
         {/* Mode: Custom Approve / Edit Approved Amount Form */}
         {mode === 'approve-custom' && (
-          <form onSubmit={handleApproveCustom} className="space-y-3 rounded-xl border border-teal-200 bg-teal-50/50 p-3">
+          <form onSubmit={handleApproveCustom} className="space-y-3 rounded-xl border border-teal-300/40 bg-teal-500/10 backdrop-blur-md p-3">
             <div>
               <label className="block text-xs font-bold text-teal-900">
                 Set Approved Amount (₹)
@@ -189,7 +188,7 @@ export function InsurerActionPanel() {
                   max={caseData.hospitalEstimate}
                   value={customAmount}
                   onChange={(e) => setCustomAmount(e.target.value)}
-                  className="cm-field text-xs font-mono font-bold bg-white"
+                  className="cm-field text-xs font-mono font-bold"
                   placeholder={String(caseData.hospitalEstimate)}
                   required
                 />
@@ -216,7 +215,7 @@ export function InsurerActionPanel() {
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
                 rows={2}
-                className="cm-field text-xs bg-white mt-1"
+                className="cm-field text-xs mt-1"
                 placeholder="e.g. Approved per CGHS code guidelines..."
               />
             </div>
@@ -247,7 +246,7 @@ export function InsurerActionPanel() {
 
         {/* Mode: Deny / Request Info Form */}
         {(mode === 'more-info' || mode === 'deny') && (
-          <div className="space-y-2 rounded-xl border border-slate-200 bg-slate-50 p-3">
+          <div className="space-y-2 rounded-xl border border-white/50 bg-white/35 backdrop-blur-md p-3">
             <p className="text-xs font-bold text-slate-800">
               {mode === 'deny' ? 'Deny Claim' : 'Request More Info'}
             </p>
@@ -256,7 +255,7 @@ export function InsurerActionPanel() {
               value={note}
               onChange={(e) => setNote(e.target.value)}
               rows={2}
-              className="cm-field text-xs bg-white mt-1"
+              className="cm-field text-xs mt-1"
               placeholder={mode === 'deny' ? 'Reason for denial…' : 'Details needed from hospital/patient…'}
             />
             <div className="flex gap-2">

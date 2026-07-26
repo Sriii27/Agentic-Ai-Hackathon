@@ -57,14 +57,14 @@ export function ReportIssueModal({ caseId }: { caseId: string }) {
 
       {open && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-xs animate-route-in"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-md animate-route-in"
           role="dialog"
           aria-modal="true"
           aria-labelledby="report-issue-heading"
           onClick={close}
         >
           <div
-            className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-xl"
+            className="glass-strong w-full max-w-md rounded-2xl p-6"
             onClick={(e) => e.stopPropagation()}
           >
             {submitted ? (

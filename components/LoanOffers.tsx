@@ -29,12 +29,12 @@ export function LoanOffers({
             return (
               <div
                 key={offer.lenderName}
-                className={`flex flex-col justify-between rounded-xl border p-4 transition-all ${
+                className={`flex flex-col justify-between rounded-xl border backdrop-blur-md p-4 transition-all ${
                   offer.flagged
-                    ? 'border-amber-300 bg-amber-50/50'
+                    ? 'border-amber-300/50 bg-amber-400/10'
                     : isRecommended
-                      ? 'border-teal-500 bg-teal-50/40'
-                      : 'border-slate-200 bg-white'
+                      ? 'border-teal-400/60 bg-teal-500/10'
+                      : 'border-white/50 bg-white/35'
                 }`}
               >
                 <div>
@@ -44,7 +44,7 @@ export function LoanOffers({
                     {isRecommended && <Badge tone="verified" className="text-[10px] bg-teal-600 text-white border-0">Recommended</Badge>}
                   </div>
 
-                  <div className="mt-3 flex items-center justify-between rounded-lg bg-slate-50 p-2.5 text-xs">
+                  <div className="mt-3 flex items-center justify-between rounded-lg bg-white/40 backdrop-blur-md p-2.5 text-xs">
                     <div>
                       <span className="text-slate-400 text-[10px] uppercase font-bold">APR</span>
                       <p className={`font-mono font-bold ${offer.flagged ? 'text-amber-700' : 'text-teal-700'}`}>
@@ -87,7 +87,7 @@ export function LoanOffers({
                           ? 'bg-teal-700 text-white'
                           : isRecommended
                             ? 'bg-teal-600 text-white hover:bg-teal-700'
-                            : 'border border-slate-200 bg-slate-100 text-slate-700 hover:bg-slate-200'
+                            : 'border border-white/50 bg-white/40 backdrop-blur-md text-slate-700 hover:bg-white/60'
                       }`}
                     >
                       {isSelected ? '✓ Selected' : 'Select Plan'}

@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { CASE_STAGES } from '@/lib/utils';
-import { Card, CardBody, CardHeader } from './ui/Card';
 
 export type CaseStatusStepperProps = {
   stage: number;
@@ -42,7 +41,7 @@ export function CaseStatusStepper({
 
   if (stage === 0) {
     return (
-      <div className="no-print border-b border-slate-200/80 bg-slate-50/60 py-3">
+      <div className="glass-nav no-print border-b py-3">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="flex items-center gap-2 text-xs font-medium text-slate-500">
             <span className="flex h-2 w-2 rounded-full bg-amber-500" />
@@ -63,7 +62,7 @@ export function CaseStatusStepper({
   }
 
   return (
-    <div className="no-print border-b border-slate-200/80 bg-white shadow-xs">
+    <div className="glass-nav no-print border-b">
       <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6">
         <div className="flex items-center justify-between gap-2 overflow-x-auto py-1 scrollbar-none">
           {CASE_STAGES.map((label, i) => {
@@ -77,14 +76,14 @@ export function CaseStatusStepper({
                 <button
                   type="button"
                   onClick={() => handleStageClick(n)}
-                  className={`group flex items-center gap-2.5 rounded-xl px-2.5 py-1.5 transition-all text-left focus-visible:outline-none ${
+                  className={`group flex items-center gap-2.5 rounded-xl px-2.5 py-1.5 backdrop-blur-md transition-all text-left focus-visible:outline-none ${
                     isSelected
-                      ? 'bg-slate-900 text-white shadow-2xs font-bold ring-2 ring-slate-900/20'
+                      ? 'bg-slate-900/80 text-white shadow-2xs font-bold ring-2 ring-slate-900/20'
                       : done
-                        ? 'hover:bg-teal-50 text-teal-900 font-semibold'
+                        ? 'hover:bg-teal-500/10 text-teal-900 font-semibold'
                         : isCurrentStage
-                          ? 'hover:bg-slate-100 text-slate-900 font-bold'
-                          : 'hover:bg-slate-100 text-slate-600'
+                          ? 'hover:bg-white/50 text-slate-900 font-bold'
+                          : 'hover:bg-white/50 text-slate-600'
                   }`}
                   title={`Click to view details for Stage ${n}: ${label}`}
                 >
@@ -96,7 +95,7 @@ export function CaseStatusStepper({
                           ? 'bg-teal-600 text-white shadow-xs'
                           : isCurrentStage
                             ? 'bg-slate-900 text-white shadow-xs'
-                            : 'border border-slate-200 bg-slate-50 text-slate-400 group-hover:border-slate-400'
+                            : 'border border-white/50 bg-white/30 text-slate-400 group-hover:border-slate-400'
                     }`}
                   >
                     {done ? (
@@ -144,7 +143,7 @@ export function CaseStatusStepper({
 
         {/* Selected Stage Detail Panel */}
         {selectedStage && STAGE_DESCRIPTIONS[selectedStage] && (
-          <div className="mt-3 rounded-xl border border-teal-200 bg-teal-50/60 p-3 text-xs animate-route-in flex items-center justify-between">
+          <div className="mt-3 rounded-xl border border-teal-300/40 bg-teal-500/10 backdrop-blur-md p-3 text-xs animate-route-in flex items-center justify-between">
             <div>
               <span className="font-bold text-teal-950">
                 {STAGE_DESCRIPTIONS[selectedStage].title}:
@@ -159,7 +158,7 @@ export function CaseStatusStepper({
             <button
               type="button"
               onClick={() => setSelectedStage(null)}
-              className="ml-3 text-[10px] font-bold text-teal-700 hover:text-teal-900 bg-white border border-teal-200 px-2 py-1 rounded-lg shrink-0"
+              className="ml-3 text-[10px] font-bold text-teal-700 hover:text-teal-900 bg-white/50 backdrop-blur-md border border-teal-300/40 px-2 py-1 rounded-lg shrink-0"
             >
               ✕ Close Info
             </button>

@@ -50,7 +50,7 @@ export function Ledger({
             <span className="font-mono text-slate-700">{approvedPct}% Covered</span>
           </div>
           <div
-            className="flex h-3 w-full overflow-hidden rounded-full bg-slate-100 p-0.5 border border-slate-200/60"
+            className="flex h-3 w-full overflow-hidden rounded-full bg-white/40 backdrop-blur-md p-0.5 border border-white/50"
             role="img"
             aria-label={`${approvedPct}% approved, ${gapPct}% gap`}
           >
@@ -71,7 +71,7 @@ export function Ledger({
 
         {/* 3 Metric Boxes */}
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-          <div className="rounded-xl border border-slate-200/80 bg-slate-50/50 p-3.5">
+          <div className="rounded-xl border border-white/50 bg-white/35 backdrop-blur-md p-3.5">
             <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
               Hospital Estimate
             </p>
@@ -83,7 +83,7 @@ export function Ledger({
             </div>
           </div>
 
-          <div className="rounded-xl border border-teal-100 bg-teal-50/40 p-3.5">
+          <div className="rounded-xl border border-teal-300/30 bg-teal-500/8 backdrop-blur-md p-3.5">
             <p className="flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-teal-800">
               <span className="h-2 w-2 rounded-full bg-teal-600" />
               Insurer Approved
@@ -96,8 +96,8 @@ export function Ledger({
             </div>
           </div>
 
-          <div className={`rounded-xl border p-3.5 ${
-            gap > 0 ? 'border-amber-200 bg-amber-50/40' : 'border-slate-200/80 bg-slate-50/50'
+          <div className={`rounded-xl border backdrop-blur-md p-3.5 ${
+            gap > 0 ? 'border-amber-300/40 bg-amber-400/10' : 'border-white/50 bg-white/35'
           }`}>
             <p className="flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-slate-700">
               <span className={`h-2 w-2 rounded-full ${gap > 0 ? 'bg-amber-500' : 'bg-slate-400'}`} />

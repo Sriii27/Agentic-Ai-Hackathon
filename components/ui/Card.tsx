@@ -9,7 +9,7 @@ export function Card({
 }) {
   return (
     <div
-      className={`rounded-2xl border border-slate-200/90 bg-white shadow-xs transition-shadow hover:shadow-sm ${className}`}
+      className={`glass glass-hoverable rounded-2xl transition-shadow ${className}`}
     >
       {children}
     </div>
@@ -26,7 +26,7 @@ export function CardHeader({
   action?: ReactNode;
 }) {
   return (
-    <div className="flex items-start justify-between gap-4 border-b border-slate-100 px-6 py-4">
+    <div className="flex items-start justify-between gap-4 border-b border-white/40 px-6 py-4">
       <div>
         <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">
           {title}

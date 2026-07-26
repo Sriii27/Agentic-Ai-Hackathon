@@ -9,7 +9,7 @@ import { CaseNotificationBanner } from '@/components/CaseNotificationBanner';
 import { TimelineRail, TimelineRailEmpty } from '@/components/TimelineRail';
 import { VerificationRail } from '@/components/VerificationRail';
 import { CompletenessChecklist } from '@/components/CompletenessChecklist';
-import { DocumentChecklist, DOCUMENT_IDS } from '@/components/DocumentChecklist';
+import { DocumentChecklist } from '@/components/DocumentChecklist';
 import { VerificationStamp } from '@/components/VerificationStamp';
 import { Card, CardBody, CardHeader } from '@/components/ui/Card';
 import { formatCurrency, formatDateTime } from '@/lib/utils';
@@ -197,7 +197,7 @@ function HospitalContent() {
             ]}
           />
         ) : (
-          <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-5 text-center space-y-2">
+          <div className="rounded-2xl border border-dashed border-white/60 bg-white/25 backdrop-blur-md p-5 text-center space-y-2">
             <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">
               Verification Panel
             </h2>
@@ -212,7 +212,7 @@ function HospitalContent() {
 
       {createdCase ? (
         <Card>
-          <div className="border-b border-slate-100 bg-slate-50/50 px-6 py-4 flex items-center justify-between">
+          <div className="border-b border-white/40 px-6 py-4 flex items-center justify-between">
             <div>
               <p className="font-mono text-xs font-bold uppercase tracking-wider text-slate-500">
                 Case Reference ID
@@ -221,7 +221,7 @@ function HospitalContent() {
                 {createdCase.caseId}
               </p>
             </div>
-            <span className="rounded-full bg-teal-50 border border-teal-200 px-3 py-1 font-mono text-xs font-semibold text-teal-700">
+            <span className="rounded-full bg-teal-500/15 border border-teal-300/40 backdrop-blur-md px-3 py-1 font-mono text-xs font-semibold text-teal-700">
               ● Active Claim Record
             </span>
           </div>
@@ -234,7 +234,7 @@ function HospitalContent() {
           <CardBody className="space-y-5">
             <div
               className={`flex items-start gap-3.5 rounded-xl border p-4 ${
-                hasFlags ? 'border-amber-300 bg-amber-50/70 text-amber-900' : 'border-teal-200 bg-teal-50/60 text-teal-900'
+                hasFlags ? 'border-amber-300/50 bg-amber-400/10 backdrop-blur-md text-amber-900' : 'border-teal-300/40 bg-teal-500/10 backdrop-blur-md text-teal-900'
               }`}
             >
               <span
@@ -259,7 +259,7 @@ function HospitalContent() {
                 {createdCase.objectivityReport.flags.map((flag) => (
                   <li
                     key={flag}
-                    className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-900"
+                    className="flex items-center gap-2 rounded-lg border border-amber-300/40 bg-amber-400/10 backdrop-blur-md px-3 py-2 text-xs font-medium text-amber-900"
                   >
                     <span>⚠️</span>
                     <span>{flag}</span>
@@ -268,7 +268,7 @@ function HospitalContent() {
               </ul>
             )}
 
-            <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2 rounded-xl border border-slate-200/80 bg-slate-50/40 p-4">
+            <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2 rounded-xl border border-white/50 bg-white/30 backdrop-blur-md p-4">
               <div>
                 <dt className="text-xs font-bold uppercase tracking-wider text-slate-500">Patient</dt>
                 <dd className="mt-0.5 text-sm font-semibold text-slate-900">{form.patientName}</dd>
@@ -321,7 +321,7 @@ function HospitalContent() {
         </Card>
       ) : (
         <Card>
-          <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/50 px-6 py-4">
+          <div className="flex items-center justify-between border-b border-white/40 px-6 py-4">
             <div>
               <h2 className="text-base font-extrabold text-slate-900">New Patient Claim Submission</h2>
               <p className="text-xs text-slate-500">Fill in patient details & attach medical files for rate audit</p>
@@ -329,7 +329,7 @@ function HospitalContent() {
             <button
               type="button"
               onClick={handleAutoFill}
-              className="rounded-xl border border-teal-300 bg-teal-50 px-3 py-1.5 text-xs font-bold text-teal-800 shadow-2xs hover:bg-teal-100 transition-all"
+              className="rounded-xl border border-teal-300/40 bg-teal-500/10 backdrop-blur-md px-3 py-1.5 text-xs font-bold text-teal-800 hover:bg-teal-500/20 transition-all"
             >
               ⚡ Auto-Fill Sample Claim
             </button>
@@ -512,7 +512,7 @@ function HospitalContent() {
 
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   {/* Slot 1: Discharge Summary / Case Sheet */}
-                  <div className="rounded-xl border border-slate-200 bg-slate-50/60 p-3">
+                  <div className="rounded-xl border border-white/50 bg-white/30 backdrop-blur-md p-3">
                     <label className="block text-xs font-bold text-slate-900">
                       📄 Discharge Summary / Clinical Sheet
                     </label>
@@ -531,7 +531,7 @@ function HospitalContent() {
                   </div>
 
                   {/* Slot 2: Government ID */}
-                  <div className="rounded-xl border border-slate-200 bg-slate-50/60 p-3">
+                  <div className="rounded-xl border border-white/50 bg-white/30 backdrop-blur-md p-3">
                     <label className="block text-xs font-bold text-slate-900">
                       🆔 Government ID / Aadhaar Card
                     </label>
@@ -550,7 +550,7 @@ function HospitalContent() {
                   </div>
 
                   {/* Slot 3: Itemized Bill / Estimate */}
-                  <div className="rounded-xl border border-slate-200 bg-slate-50/60 p-3">
+                  <div className="rounded-xl border border-white/50 bg-white/30 backdrop-blur-md p-3">
                     <label className="block text-xs font-bold text-slate-900">
                       🧾 Itemized Hospital Bill / Estimate
                     </label>
@@ -569,7 +569,7 @@ function HospitalContent() {
                   </div>
 
                   {/* Slot 4: Insurance Policy Copy */}
-                  <div className="rounded-xl border border-slate-200 bg-slate-50/60 p-3">
+                  <div className="rounded-xl border border-white/50 bg-white/30 backdrop-blur-md p-3">
                     <label className="block text-xs font-bold text-slate-900">
                       📜 Insurance Policy Document Copy
                     </label>
@@ -590,7 +590,7 @@ function HospitalContent() {
               </fieldset>
 
               {submitError && (
-                <div className="rounded-xl border border-amber-300 bg-amber-50 p-3 text-xs text-amber-900">
+                <div className="rounded-xl border border-amber-300/40 bg-amber-400/10 backdrop-blur-md p-3 text-xs text-amber-900">
                   ⚠️ {submitError}
                 </div>
               )}

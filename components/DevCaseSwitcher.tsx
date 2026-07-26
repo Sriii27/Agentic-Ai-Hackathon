@@ -17,7 +17,7 @@ export function DevCaseSwitcher() {
       <button
         type="button"
         onClick={() => setCollapsed(false)}
-        className="no-print fixed bottom-4 right-4 z-40 flex items-center gap-2 rounded-full border border-slate-300 bg-white/95 px-3 py-2 text-xs font-bold text-slate-800 shadow-md backdrop-blur hover:bg-slate-100 transition-all"
+        className="glass no-print fixed bottom-4 right-4 z-40 flex items-center gap-2 rounded-full px-3 py-2 text-xs font-bold text-slate-800 transition-all"
       >
         <span>⚡ Switch Demo Case</span>
       </button>
@@ -25,7 +25,7 @@ export function DevCaseSwitcher() {
   }
 
   return (
-    <div className="no-print fixed bottom-4 right-4 z-40 flex items-center gap-2.5 rounded-2xl border border-slate-200 bg-white/95 p-3 shadow-lg backdrop-blur animate-route-in">
+    <div className="glass no-print fixed bottom-4 right-4 z-40 flex items-center gap-2.5 rounded-2xl p-3 animate-route-in">
       <span className="rounded-lg bg-teal-600 px-2 py-1 font-mono text-[10px] font-bold uppercase text-white shadow-2xs">
         Demo
       </span>
@@ -34,7 +34,7 @@ export function DevCaseSwitcher() {
         <select
           value={caseId}
           onChange={(e) => setCaseId(e.target.value)}
-          className="rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1.5 font-mono text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-600"
+          className="glass-input rounded-lg px-2.5 py-1.5 font-mono text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-600"
         >
           {availableCaseIds.map((id) => (
             <option key={id} value={id}>
@@ -47,7 +47,7 @@ export function DevCaseSwitcher() {
       <button
         type="button"
         onClick={() => setCollapsed(true)}
-        className="ml-1 rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+        className="ml-1 rounded-lg p-1 text-slate-400 hover:bg-white/50 hover:text-slate-700"
         title="Minimize switcher"
       >
         ✕

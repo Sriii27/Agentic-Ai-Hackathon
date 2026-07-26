@@ -45,10 +45,10 @@ function LoginAndOverviewContent() {
     <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6 sm:px-6 sm:py-10 animate-route-in space-y-8">
       
       {/* Hero & Welcome */}
-      <section className="text-center sm:text-left rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-xs">
+      <section className="glass text-center sm:text-left rounded-2xl p-6 sm:p-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-teal-200 bg-teal-50 px-3 py-0.5 text-xs font-bold text-teal-700">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-teal-300/40 bg-teal-500/10 backdrop-blur-md px-3 py-0.5 text-xs font-bold text-teal-700">
               ✓ Care Mediator — Shared Healthcare Record
             </span>
             <h1 className="mt-2 text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
@@ -60,7 +60,7 @@ function LoginAndOverviewContent() {
           </div>
 
           {user && (
-            <div className="rounded-xl border border-teal-200 bg-teal-50 p-3 text-left">
+            <div className="rounded-xl border border-teal-300/40 bg-teal-500/10 backdrop-blur-md p-3 text-left">
               <span className="text-[10px] font-bold uppercase tracking-wider text-teal-700">Logged In As</span>
               <p className="text-xs font-bold text-slate-900">{user.name}</p>
               <p className="text-[11px] font-mono text-slate-600">{user.idNumber}</p>
@@ -73,9 +73,9 @@ function LoginAndOverviewContent() {
       </section>
 
       {/* LOGIN PORTAL SECTION */}
-      <section className="rounded-2xl border-2 border-teal-500/80 bg-white p-6 shadow-md relative">
-        <div className="mb-6 text-center sm:text-left border-b border-slate-100 pb-4">
-          <span className="rounded-full bg-slate-900 text-white font-mono text-[10px] font-bold px-2.5 py-0.5 uppercase tracking-wider">
+      <section className="rounded-2xl border-2 border-teal-400/50 bg-white/55 backdrop-blur-xl shadow-lg p-6 relative">
+        <div className="mb-6 text-center sm:text-left border-b border-white/40 pb-4">
+          <span className="rounded-full bg-slate-900/80 backdrop-blur-md text-white font-mono text-[10px] font-bold px-2.5 py-0.5 uppercase tracking-wider">
             Required Step
           </span>
           <h2 className="mt-2 text-xl font-extrabold text-slate-900">
@@ -87,7 +87,7 @@ function LoginAndOverviewContent() {
         </div>
 
         {/* 1-Click Instant Demo Login Buttons */}
-        <div className="mb-6 rounded-xl border border-teal-200 bg-teal-50/50 p-4">
+        <div className="mb-6 rounded-xl border border-teal-300/40 bg-teal-500/10 backdrop-blur-md p-4">
           <p className="text-xs font-bold uppercase tracking-wider text-teal-800 mb-2.5 text-center sm:text-left">
             ⚡ Instant 1-Click Demo Logins
           </p>
@@ -95,7 +95,7 @@ function LoginAndOverviewContent() {
             <button
               type="button"
               onClick={() => handleDemoLogin('hospital', 'clean-case')}
-              className="flex flex-col items-center sm:items-start rounded-xl border border-slate-200 bg-white p-3 text-xs font-bold text-slate-900 shadow-2xs hover:border-slate-400 hover:bg-slate-50 transition-all text-center sm:text-left"
+              className="flex flex-col items-center sm:items-start rounded-xl border border-white/50 bg-white/40 backdrop-blur-md p-3 text-xs font-bold text-slate-900 hover:bg-white/60 transition-all text-center sm:text-left"
             >
               <span className="text-sm">🏥 Hospital Staff Login</span>
               <span className="text-[10px] font-medium text-slate-500 mt-0.5">Submit & audit claims</span>
@@ -104,7 +104,7 @@ function LoginAndOverviewContent() {
             <button
               type="button"
               onClick={() => handleDemoLogin('patient', 'clean-case')}
-              className="flex flex-col items-center sm:items-start rounded-xl border border-teal-300 bg-teal-600 p-3 text-xs font-bold text-white shadow-2xs hover:bg-teal-700 transition-all text-center sm:text-left"
+              className="flex flex-col items-center sm:items-start rounded-xl border border-teal-300/50 bg-teal-600/75 backdrop-blur-md p-3 text-xs font-bold text-white hover:bg-teal-600/90 transition-all text-center sm:text-left"
             >
               <span className="text-sm">👤 Patient Portal Login</span>
               <span className="text-[10px] font-medium text-teal-100 mt-0.5">View bills & financing</span>
@@ -113,7 +113,7 @@ function LoginAndOverviewContent() {
             <button
               type="button"
               onClick={() => handleDemoLogin('insurer', 'gotcha-case')}
-              className="flex flex-col items-center sm:items-start rounded-xl border border-slate-700 bg-slate-900 p-3 text-xs font-bold text-white shadow-2xs hover:bg-slate-800 transition-all text-center sm:text-left"
+              className="flex flex-col items-center sm:items-start rounded-xl border border-white/10 bg-slate-900/75 backdrop-blur-md p-3 text-xs font-bold text-white hover:bg-slate-900/90 transition-all text-center sm:text-left"
             >
               <span className="text-sm">🛡️ Insurance Agent Login</span>
               <span className="text-[10px] font-medium text-slate-300 mt-0.5">Adjudicate pre-checked cases</span>
@@ -122,12 +122,12 @@ function LoginAndOverviewContent() {
         </div>
 
         {/* Custom Login Form Tabs */}
-        <div className="grid grid-cols-3 gap-1.5 rounded-xl border border-slate-200 bg-slate-100 p-1 mb-4 text-xs font-bold">
+        <div className="grid grid-cols-3 gap-1.5 rounded-xl border border-white/50 bg-white/30 backdrop-blur-md p-1 mb-4 text-xs font-bold">
           <button
             type="button"
             onClick={() => setSelectedRole('hospital')}
-            className={`py-2 px-3 rounded-lg transition-all ${
-              selectedRole === 'hospital' ? 'bg-white text-slate-900 shadow-2xs font-extrabold' : 'text-slate-600 hover:text-slate-900'
+            className={`py-2 px-3 rounded-lg backdrop-blur-md transition-all ${
+              selectedRole === 'hospital' ? 'bg-white/70 text-slate-900 shadow-2xs font-extrabold' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             🏥 Hospital
@@ -135,8 +135,8 @@ function LoginAndOverviewContent() {
           <button
             type="button"
             onClick={() => setSelectedRole('patient')}
-            className={`py-2 px-3 rounded-lg transition-all ${
-              selectedRole === 'patient' ? 'bg-white text-slate-900 shadow-2xs font-extrabold' : 'text-slate-600 hover:text-slate-900'
+            className={`py-2 px-3 rounded-lg backdrop-blur-md transition-all ${
+              selectedRole === 'patient' ? 'bg-white/70 text-slate-900 shadow-2xs font-extrabold' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             👤 Patient
@@ -144,8 +144,8 @@ function LoginAndOverviewContent() {
           <button
             type="button"
             onClick={() => setSelectedRole('insurer')}
-            className={`py-2 px-3 rounded-lg transition-all ${
-              selectedRole === 'insurer' ? 'bg-white text-slate-900 shadow-2xs font-extrabold' : 'text-slate-600 hover:text-slate-900'
+            className={`py-2 px-3 rounded-lg backdrop-blur-md transition-all ${
+              selectedRole === 'insurer' ? 'bg-white/70 text-slate-900 shadow-2xs font-extrabold' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             🛡️ Insurance Agent
@@ -153,7 +153,7 @@ function LoginAndOverviewContent() {
         </div>
 
         {/* Form Inputs */}
-        <form onSubmit={handleCustomLogin} className="space-y-3 rounded-xl border border-slate-200 bg-slate-50/50 p-4">
+        <form onSubmit={handleCustomLogin} className="space-y-3 rounded-xl border border-white/50 bg-white/25 backdrop-blur-md p-4">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
               <label className="block text-xs font-bold text-slate-800">Full Name</label>
@@ -162,7 +162,7 @@ function LoginAndOverviewContent() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder={MOCK_USERS[selectedRole].name}
-                className="cm-field text-xs bg-white"
+                className="cm-field text-xs"
               />
             </div>
             <div>
@@ -178,7 +178,7 @@ function LoginAndOverviewContent() {
                 value={idNumber}
                 onChange={(e) => setIdNumber(e.target.value)}
                 placeholder={MOCK_USERS[selectedRole].idNumber}
-                className="cm-field text-xs font-mono bg-white"
+                className="cm-field text-xs font-mono"
               />
             </div>
           </div>
@@ -199,8 +199,8 @@ function LoginAndOverviewContent() {
         </h2>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <div className="rounded-2xl border border-slate-200 bg-white p-5">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-900 font-mono text-xs font-bold text-white">
+          <div className="glass rounded-2xl p-5">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-900/80 backdrop-blur-md font-mono text-xs font-bold text-white">
               1
             </div>
             <h3 className="mt-3 text-sm font-bold text-slate-900">Hospital Submits Case</h3>
@@ -209,8 +209,8 @@ function LoginAndOverviewContent() {
             </p>
           </div>
 
-          <div className="rounded-2xl border border-teal-200 bg-teal-50/40 p-5">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-teal-600 font-mono text-xs font-bold text-white">
+          <div className="rounded-2xl border border-teal-300/40 bg-teal-500/10 backdrop-blur-xl p-5">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-teal-600/85 backdrop-blur-md font-mono text-xs font-bold text-white">
               2
             </div>
             <h3 className="mt-3 text-sm font-bold text-slate-900">Automated Rate Check</h3>
@@ -222,8 +222,8 @@ function LoginAndOverviewContent() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-white p-5">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-teal-700 font-mono text-xs font-bold text-white">
+          <div className="glass rounded-2xl p-5">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-teal-700/85 backdrop-blur-md font-mono text-xs font-bold text-white">
               3
             </div>
             <h3 className="mt-3 text-sm font-bold text-slate-900">Single Shared Truth</h3>
@@ -236,19 +236,19 @@ function LoginAndOverviewContent() {
 
       {/* Impact Stats */}
       <section className="grid grid-cols-2 gap-3 sm:grid-cols-4 pt-2">
-        <div className="rounded-xl border border-slate-200 bg-white p-3 text-center">
+        <div className="glass rounded-xl p-3 text-center">
           <span className="text-[10px] font-bold uppercase text-slate-400">Claim Speed</span>
           <p className="font-mono text-lg font-extrabold text-slate-900">&lt; 2 Mins</p>
         </div>
-        <div className="rounded-xl border border-slate-200 bg-white p-3 text-center">
+        <div className="glass rounded-xl p-3 text-center">
           <span className="text-[10px] font-bold uppercase text-slate-400">Rate Audit</span>
           <p className="font-mono text-lg font-extrabold text-teal-700">100% CGHS</p>
         </div>
-        <div className="rounded-xl border border-slate-200 bg-white p-3 text-center">
+        <div className="glass rounded-xl p-3 text-center">
           <span className="text-[10px] font-bold uppercase text-slate-400">Disputes</span>
           <p className="font-mono text-lg font-extrabold text-slate-900">0 Version Conflicts</p>
         </div>
-        <div className="rounded-xl border border-slate-200 bg-white p-3 text-center">
+        <div className="glass rounded-xl p-3 text-center">
           <span className="text-[10px] font-bold uppercase text-slate-400">Financing</span>
           <p className="font-mono text-lg font-extrabold text-teal-700">0% APR EMI</p>
         </div>
@@ -259,9 +259,9 @@ function LoginAndOverviewContent() {
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50/70">
+    <div className="flex min-h-screen flex-col">
       {/* Header Bar */}
-      <header className="border-b border-slate-200/80 bg-white/90 backdrop-blur-md">
+      <header className="glass-nav border-b">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6">
           <div className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-600 font-bold text-white shadow-xs">
@@ -269,7 +269,7 @@ export default function Home() {
             </div>
             <span className="text-base font-bold tracking-tight text-slate-900">Care Mediator</span>
           </div>
-          <span className="rounded-full bg-teal-50 border border-teal-200 px-3 py-1 font-mono text-xs font-semibold text-teal-700">
+          <span className="rounded-full bg-teal-500/15 border border-teal-300/40 backdrop-blur-md px-3 py-1 font-mono text-xs font-semibold text-teal-700">
             ● Live Platform
           </span>
         </div>

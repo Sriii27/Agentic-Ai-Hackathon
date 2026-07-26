@@ -18,10 +18,10 @@ export function CaseNotificationBanner() {
     <div
       role="status"
       aria-live="polite"
-      className={`no-print border-b ${
+      className={`no-print border-b backdrop-blur-xl ${
         isVerified
-          ? 'border-verified/30 bg-verified-tint'
-          : 'border-amber/30 bg-amber-tint'
+          ? 'border-verified/30 bg-teal-500/10'
+          : 'border-amber/30 bg-amber-400/10'
       }`}
     >
       <div className="mx-auto flex max-w-7xl items-start justify-between gap-4 px-4 py-3 sm:px-6">

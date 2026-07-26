@@ -32,8 +32,8 @@ export function CoverageExplainerCard({
       />
       <CardBody className="space-y-4">
         {/* Coverage Callout */}
-        <div className={`flex items-center gap-3 rounded-xl border p-3.5 ${
-          covered ? 'border-teal-200 bg-teal-50/50 text-teal-900' : 'border-amber-200 bg-amber-50/50 text-amber-900'
+        <div className={`flex items-center gap-3 rounded-xl border backdrop-blur-md p-3.5 ${
+          covered ? 'border-teal-300/40 bg-teal-500/10 text-teal-900' : 'border-amber-300/40 bg-amber-400/10 text-amber-900'
         }`}>
           <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
             covered ? 'bg-teal-600 text-white' : 'bg-amber-600 text-white'
@@ -49,7 +49,7 @@ export function CoverageExplainerCard({
 
         {/* Details Grid */}
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <div className="rounded-xl border border-slate-200/80 bg-slate-50/50 p-3.5">
+          <div className="rounded-xl border border-white/50 bg-white/35 backdrop-blur-md p-3.5">
             <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
               Waiting Period
             </p>
@@ -58,7 +58,7 @@ export function CoverageExplainerCard({
             </p>
           </div>
 
-          <div className="rounded-xl border border-slate-200/80 bg-slate-50/50 p-3.5">
+          <div className="rounded-xl border border-white/50 bg-white/35 backdrop-blur-md p-3.5">
             <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
               Coverage Limit
             </p>
@@ -86,7 +86,7 @@ export function CoverageExplainerCard({
               {exclusionsApplicable.map((exclusion) => (
                 <li
                   key={exclusion}
-                  className="flex items-center gap-2 rounded-lg border border-amber-200/70 bg-amber-50/60 px-3 py-2 text-xs text-amber-900"
+                  className="flex items-center gap-2 rounded-lg border border-amber-300/40 bg-amber-400/10 backdrop-blur-md px-3 py-2 text-xs text-amber-900"
                 >
                   <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
                   <span className="font-medium">{exclusion}</span>

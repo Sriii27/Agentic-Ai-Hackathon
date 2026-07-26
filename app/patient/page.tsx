@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useState } from 'react';
 import { useCase } from '@/lib/case-context';
 import { deriveStage } from '@/lib/utils';
@@ -68,7 +67,7 @@ function PatientContent() {
       <ComparisonTray />
     </>
   ) : (
-    <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs space-y-3">
+    <div className="glass rounded-2xl p-5 space-y-3">
       <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">
         Verification Panel
       </h2>
@@ -123,7 +122,7 @@ function PatientContent() {
           <CaseSummaryHeader caseData={caseData} action={<PrintButton />} />
 
           {/* Clean Section Navigation Tabs */}
-          <div className="flex items-center gap-1.5 overflow-x-auto rounded-2xl border border-slate-200 bg-white p-1.5 shadow-2xs">
+          <div className="flex items-center gap-1.5 overflow-x-auto rounded-2xl border border-white/50 bg-white/35 backdrop-blur-md p-1.5">
             <button
               type="button"
               onClick={() => {
@@ -132,8 +131,8 @@ function PatientContent() {
               }}
               className={`flex-1 min-w-max rounded-xl px-4 py-2 text-xs font-bold transition-all ${
                 activeTab === 'overview'
-                  ? 'bg-teal-600 text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                  ? 'bg-teal-600/85 backdrop-blur-md text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
               }`}
             >
               📊 Overview & Cost Breakdown
@@ -146,8 +145,8 @@ function PatientContent() {
               }}
               className={`flex-1 min-w-max rounded-xl px-4 py-2 text-xs font-bold transition-all ${
                 activeTab === 'coverage'
-                  ? 'bg-teal-600 text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                  ? 'bg-teal-600/85 backdrop-blur-md text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
               }`}
             >
               🛡️ Policy & Exclusions
@@ -160,8 +159,8 @@ function PatientContent() {
               }}
               className={`flex-1 min-w-max rounded-xl px-4 py-2 text-xs font-bold transition-all ${
                 activeTab === 'documents'
-                  ? 'bg-teal-600 text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                  ? 'bg-teal-600/85 backdrop-blur-md text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
               }`}
             >
               📁 Documents & Consent ({uploadedDocs.length}/{DOCUMENT_IDS.length})
@@ -174,8 +173,8 @@ function PatientContent() {
               }}
               className={`flex-1 min-w-max rounded-xl px-4 py-2 text-xs font-bold transition-all ${
                 activeTab === 'financing'
-                  ? 'bg-teal-600 text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                  ? 'bg-teal-600/85 backdrop-blur-md text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
               }`}
             >
               💳 Payment Plans
@@ -207,7 +206,7 @@ function PatientContent() {
                 ]}
               />
 
-              <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white p-4">
+              <div className="glass flex items-center justify-between rounded-2xl p-4">
                 <div className="text-xs">
                   <p className="font-bold text-slate-900">Need help or wish to dispute a finding?</p>
                   <p className="text-slate-500">Report an issue directly to the insurer and grievance officer.</p>
@@ -228,8 +227,8 @@ function PatientContent() {
           {activeTab === 'documents' && (
             <div className="space-y-6 animate-route-in">
               {/* Consent Record Card */}
-              <div className="rounded-2xl border border-teal-200 bg-white p-5 shadow-xs">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="rounded-2xl border border-teal-300/40 bg-white/45 backdrop-blur-xl p-5 shadow-lg shadow-teal-900/5">
+                <div className="flex items-center justify-between border-b border-white/40 pb-3">
                   <div>
                     <h2 className="text-xs font-bold uppercase tracking-wider text-teal-800">
                       Consent Record

@@ -26,7 +26,7 @@ export function CaseFileShell({
   const [activeTab, setActiveTab] = useState<'main' | 'timeline' | 'verification'>('main');
 
   return (
-    <div className="flex min-h-screen bg-slate-50/70">
+    <div className="flex min-h-screen">
       {/* Sidebar Navigation */}
       <Sidebar className="hidden lg:flex" />
 
@@ -37,15 +37,15 @@ export function CaseFileShell({
         {notification}
 
         {/* Mobile/Tablet view tab switcher */}
-        <div className="no-print border-b border-slate-200 bg-white lg:hidden">
+        <div className="glass-nav no-print border-b lg:hidden">
           <div className="mx-auto flex max-w-7xl px-4 py-2 gap-2">
             <button
               type="button"
               onClick={() => setActiveTab('main')}
-              className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition-colors ${
+              className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold backdrop-blur-md transition-colors ${
                 activeTab === 'main'
-                  ? 'bg-slate-900 text-white shadow-xs'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  ? 'bg-slate-900/80 text-white shadow-xs'
+                  : 'bg-white/35 text-slate-600 hover:bg-white/55'
               }`}
             >
               📋 Case Details
@@ -53,10 +53,10 @@ export function CaseFileShell({
             <button
               type="button"
               onClick={() => setActiveTab('timeline')}
-              className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition-colors ${
+              className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold backdrop-blur-md transition-colors ${
                 activeTab === 'timeline'
-                  ? 'bg-slate-900 text-white shadow-xs'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  ? 'bg-slate-900/80 text-white shadow-xs'
+                  : 'bg-white/35 text-slate-600 hover:bg-white/55'
               }`}
             >
               ⏱️ Timeline
@@ -65,10 +65,10 @@ export function CaseFileShell({
               <button
                 type="button"
                 onClick={() => setActiveTab('verification')}
-                className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition-colors ${
+                className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold backdrop-blur-md transition-colors ${
                   activeTab === 'verification'
-                    ? 'bg-slate-900 text-white shadow-xs'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    ? 'bg-slate-900/80 text-white shadow-xs'
+                    : 'bg-white/35 text-slate-600 hover:bg-white/55'
                 }`}
               >
                 🛡️ Verification

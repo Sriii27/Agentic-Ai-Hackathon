@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useState } from 'react';
 import { useCase } from '@/lib/case-context';
 import { deriveStage } from '@/lib/utils';
@@ -59,7 +58,7 @@ function InsurerContent() {
       <InsurerActionPanel key={caseData.caseId} />
     </div>
   ) : (
-    <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs space-y-3">
+    <div className="glass rounded-2xl p-5 space-y-3">
       <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">
         Verification Status
       </h2>
@@ -101,7 +100,7 @@ function InsurerContent() {
           <CaseSummaryHeader caseData={caseData} />
 
           {/* Functional Stage Navigation Tabs */}
-          <div className="flex items-center gap-1.5 overflow-x-auto rounded-2xl border border-slate-200 bg-white p-1.5 shadow-2xs">
+          <div className="flex items-center gap-1.5 overflow-x-auto rounded-2xl border border-white/50 bg-white/35 backdrop-blur-md p-1.5">
             <button
               type="button"
               onClick={() => {
@@ -110,8 +109,8 @@ function InsurerContent() {
               }}
               className={`flex-1 min-w-max rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${
                 activeTab === 'submitted'
-                  ? 'bg-slate-900 text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                  ? 'bg-slate-900/80 backdrop-blur-md text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
               }`}
             >
               📄 1. Submitted Intake & Docs
@@ -125,8 +124,8 @@ function InsurerContent() {
               }}
               className={`flex-1 min-w-max rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${
                 activeTab === 'audit'
-                  ? 'bg-slate-900 text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                  ? 'bg-slate-900/80 backdrop-blur-md text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
               }`}
             >
               🛡️ 2. Rate Audit {hasFlags && '(⚠️ Flags)'}
@@ -140,8 +139,8 @@ function InsurerContent() {
               }}
               className={`flex-1 min-w-max rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${
                 activeTab === 'review'
-                  ? 'bg-slate-900 text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                  ? 'bg-slate-900/80 backdrop-blur-md text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
               }`}
             >
               ✏️ 3. Insurer Adjudication & Policy
@@ -155,8 +154,8 @@ function InsurerContent() {
               }}
               className={`flex-1 min-w-max rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${
                 activeTab === 'decision'
-                  ? 'bg-slate-900 text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                  ? 'bg-slate-900/80 backdrop-blur-md text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
               }`}
             >
               💳 4. Final Ledger & Gap Financing
@@ -172,7 +171,7 @@ function InsurerContent() {
                   subtitle={`Claim submitted by ${caseData.hospitalName}`}
                 />
                 <CardBody className="space-y-4">
-                  <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2 rounded-xl border border-slate-200 bg-slate-50 p-4">
+                  <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2 rounded-xl border border-white/50 bg-white/30 backdrop-blur-md p-4">
                     <div>
                       <dt className="text-xs font-bold uppercase text-slate-400">Patient Name</dt>
                       <dd className="mt-0.5 text-sm font-bold text-slate-900">{caseData.patientName}</dd>
@@ -202,7 +201,7 @@ function InsurerContent() {
           {/* Tab 2: Objectivity Rate Audit */}
           {activeTab === 'audit' && (
             <div className="space-y-6 animate-route-in">
-              <Card className={hasFlags ? 'border-amber-300 bg-amber-50/20' : 'border-teal-200 bg-teal-50/20'}>
+              <Card className={hasFlags ? 'outline outline-1 -outline-offset-1 outline-amber-300/50' : 'outline outline-1 -outline-offset-1 outline-teal-300/50'}>
                 <CardHeader
                   title="Automated Objectivity Rate Audit Report"
                   subtitle={
@@ -220,7 +219,7 @@ function InsurerContent() {
                       {caseData.objectivityReport.flags.map((flag) => (
                         <li
                           key={flag}
-                          className="flex items-start gap-2.5 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900 font-medium"
+                          className="flex items-start gap-2.5 rounded-xl border border-amber-300/40 bg-amber-400/10 backdrop-blur-md p-3 text-xs text-amber-900 font-medium"
                         >
                           <span className="mt-0.5 text-amber-600">⚠️</span>
                           <span>{flag}</span>
@@ -228,7 +227,7 @@ function InsurerContent() {
                       ))}
                     </ul>
                   ) : (
-                    <div className="flex items-center gap-2 rounded-xl border border-teal-200 bg-teal-50 p-3 text-xs text-teal-900 font-semibold">
+                    <div className="flex items-center gap-2 rounded-xl border border-teal-300/40 bg-teal-500/10 backdrop-blur-md p-3 text-xs text-teal-900 font-semibold">
                       <span className="flex h-4 w-4 items-center justify-center rounded-full bg-teal-600 text-white font-bold text-[10px]">✓</span>
                       Consistent across hospital records, diagnosis codes, and CGHS policy terms.
                     </div>

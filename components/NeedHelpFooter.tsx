@@ -1,6 +1,6 @@
 export function NeedHelpFooter() {
   return (
-    <footer className="no-print border-t border-hairline bg-paper-raised">
+    <footer className="glass-nav no-print border-t">
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
         <p className="max-w-4xl text-sm text-slate">
           <span className="font-semibold text-ink">Need help? </span>

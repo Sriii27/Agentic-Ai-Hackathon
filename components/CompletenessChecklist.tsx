@@ -13,7 +13,7 @@ export function CompletenessChecklist({ items }: { items: CompletenessItem[] }) 
   const allDone = doneCount === totalCount;
 
   return (
-    <Card className={allDone ? 'border-teal-200 bg-teal-50/10' : 'border-amber-200 bg-amber-50/10'}>
+    <Card className={allDone ? 'outline outline-1 -outline-offset-1 outline-teal-300/50' : 'outline outline-1 -outline-offset-1 outline-amber-300/50'}>
       <CardHeader
         title="Checklist"
         action={
@@ -23,7 +23,7 @@ export function CompletenessChecklist({ items }: { items: CompletenessItem[] }) 
         }
       />
       <CardBody className="space-y-3">
-        <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-100 border border-slate-200/60">
+        <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/40 backdrop-blur-md outline outline-1 -outline-offset-1 outline-white/50">
           <div
             className={`h-full transition-all duration-300 ${allDone ? 'bg-teal-600' : 'bg-amber-500'}`}
             style={{ width: `${pct}%` }}
@@ -34,7 +34,7 @@ export function CompletenessChecklist({ items }: { items: CompletenessItem[] }) 
           {items.map((item) => (
             <li
               key={item.label}
-              className="flex items-center gap-2 rounded-lg border border-slate-200/80 bg-white px-3 py-2 text-xs"
+              className="flex items-center gap-2 rounded-lg border border-white/50 bg-white/35 backdrop-blur-md px-3 py-2 text-xs"
             >
               <span
                 aria-hidden

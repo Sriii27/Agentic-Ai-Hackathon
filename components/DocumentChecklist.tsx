@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Card, CardBody, CardHeader } from './ui/Card';
 import { Badge } from './ui/Badge';
 import { listDocuments, uploadDocument, ApiError } from '@/lib/api';
@@ -32,6 +32,13 @@ export function DocumentChecklist({
     setDocuments([]);
   }
 
+  // Keep the latest onChange without making the effect below re-run every
+  // time the parent passes a new inline function reference.
+  const onChangeRef = useRef(onChange);
+  useEffect(() => {
+    onChangeRef.current = onChange;
+  });
+
   useEffect(() => {
     if (!caseId) return;
     let cancelled = false;
@@ -39,7 +46,7 @@ export function DocumentChecklist({
       .then((docs) => {
         if (cancelled) return;
         setDocuments(docs);
-        onChange?.(docs.map((d) => d.documentId));
+        onChangeRef.current?.(docs.map((d) => d.documentId));
       })
       .catch(() => {});
     return () => {
@@ -79,11 +86,11 @@ export function DocumentChecklist({
             return (
               <div
                 key={doc.id}
-                className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-3 text-xs"
+                className="flex items-center justify-between gap-3 rounded-xl border border-white/50 bg-white/35 backdrop-blur-md p-3 text-xs"
               >
                 <div className="flex items-center gap-2.5">
                   <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md font-bold ${
-                    isUploaded ? 'bg-teal-600 text-white' : 'bg-slate-100 text-slate-400'
+                    isUploaded ? 'bg-teal-600 text-white' : 'bg-white/40 backdrop-blur-md text-slate-400'
                   }`}>
                     {isUploaded ? '✓' : '📄'}
                   </span>
