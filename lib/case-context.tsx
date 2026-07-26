@@ -42,7 +42,12 @@ type CaseContextValue = {
 const CaseContext = createContext<CaseContextValue | null>(null);
 
 export function CaseProvider({ children }: { children: React.ReactNode }) {
-  const [caseId, setCaseIdState] = useState<string>(readStoredCaseId);
+  // Always start empty so the first client render matches the server-rendered
+  // HTML — reading localStorage synchronously here would mismatch whenever a
+  // case is already stored. The render-time correction below (which only
+  // runs once availableCaseIds is populated, i.e. safely past hydration)
+  // already calls readStoredCaseId() itself, so no separate effect is needed.
+  const [caseId, setCaseIdState] = useState<string>('');
   const [caseData, setCaseData] = useState<CaseData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

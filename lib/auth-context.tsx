@@ -58,24 +58,39 @@ type AuthContextValue = {
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<UserProfile | null>(() => {
-    if (typeof window === 'undefined') return null;
-    const stored = window.localStorage.getItem(AUTH_STORAGE_KEY);
-    if (!stored) return null; // Require explicit login
-    try {
-      return JSON.parse(stored);
-    } catch {
-      return null;
-    }
-  });
+  // Always start logged-out so the very first client render matches the
+  // server-rendered HTML exactly — reading localStorage here (even guarded
+  // by typeof window) causes a hydration mismatch on every page where a
+  // session is already stored, since SSR can never see it but the client's
+  // first render otherwise would.
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const [hydrated, setHydrated] = useState(false);
+
+  // Restore a stored session once we're safely past hydration. Deferred
+  // through a microtask (rather than calling setState synchronously at the
+  // top of the effect) per this repo's established pattern for satisfying
+  // react-hooks/set-state-in-effect.
+  useEffect(() => {
+    Promise.resolve().then(() => {
+      try {
+        const stored = window.localStorage.getItem(AUTH_STORAGE_KEY);
+        if (stored) setUser(JSON.parse(stored));
+      } catch {
+        // ignore corrupt stored value
+      } finally {
+        setHydrated(true);
+      }
+    });
+  }, []);
 
   useEffect(() => {
+    if (!hydrated) return; // don't clobber storage before we've read it
     if (user) {
       window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
     } else {
       window.localStorage.removeItem(AUTH_STORAGE_KEY);
     }
-  }, [user]);
+  }, [user, hydrated]);
 
   const loginAsRole = useCallback((role: Exclude<UserRole, 'guest'>) => {
     setUser(MOCK_USERS[role]);
