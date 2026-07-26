@@ -4,11 +4,15 @@ import { useTheme, useWidgetSDK } from '@nitrostack/widgets';
 
 /**
  * Objectivity Report Widget
- * Bound to: build_objective_case_report, reconcile_case, reconcile_case_by_id
+ * Bound to: build_objective_case_report, reconcile_case
  *
  * Visualises the objectivity check result — consistent vs flagged,
  * with each inconsistency called out clearly. This is the "neutral
  * third party" view that both hospital and insurer can trust.
+ * Also accepts the reconcile_case_by_id/get_live_case_status field names
+ * (patientName, procedure, caseId, flags, objectivitySummary) below —
+ * that pair's primary widget is case-summary, but this stays defensive
+ * in case one is ever routed here directly.
  */
 
 interface ObjectivityReportData {

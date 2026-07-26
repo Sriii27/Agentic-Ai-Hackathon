@@ -1,6 +1,6 @@
-import { ToolDecorator as Tool, Injectable, ExecutionContext, z } from '@nitrostack/core';
+import { ToolDecorator as Tool, Widget, Injectable, ExecutionContext, z } from '@nitrostack/core';
 import { InsurerDataService } from './insurer.data.service.js';
-import { CaseStoreService } from '../shared/case-store.service.js';
+import { CaseStoreService, toCaseSummary } from '../shared/case-store.service.js';
 
 /**
  * Insurer Agent Tools
@@ -29,6 +29,7 @@ export class InsurerTools {
       patientId: z.string().describe('Patient identifier, e.g. PAT-01'),
     }),
   })
+  @Widget('claim-status')
   async getClaimStatus(input: { patientId: string }, ctx: ExecutionContext) {
     ctx.logger.info('Fetching claim status', input);
     const claim = this.insurerData.getClaimByPatient(input.patientId);
@@ -54,6 +55,7 @@ export class InsurerTools {
       hospitalId: z.string().describe('Hospital identifier, e.g. HOSP-01'),
     }),
   })
+  @Widget('network-check')
   async checkNetworkHospital(input: { hospitalId: string }, ctx: ExecutionContext) {
     ctx.logger.info('Checking network hospital status', input);
     return {
@@ -74,26 +76,11 @@ export class InsurerTools {
       caseId: z.string().describe('Care Mediator case ID, e.g. clean-case or a CM-xxxxx ID'),
     }),
   })
+  @Widget('case-summary')
   async getLiveCaseStatus(input: { caseId: string }, ctx: ExecutionContext) {
     ctx.logger.info('Fetching live case from backend', input);
     const caseData = await this.caseStore.getCase(input.caseId);
-
-    return {
-      caseId: caseData.caseId,
-      patientName: caseData.patientName,
-      hospitalName: caseData.hospitalName,
-      procedure: caseData.procedure,
-      submittedAt: caseData.submittedAt,
-      claimStatus: caseData.claimStatus,
-      denialReason: caseData.denialReason ?? null,
-      hospitalEstimate: caseData.hospitalEstimate,
-      insurerApproved: caseData.insurerApproved,
-      gap: caseData.gap,
-      coverageExplainer: caseData.coverageExplainer,
-      objectivityReport: caseData.objectivityReport,
-      timelineLength: caseData.timeline.length,
-      latestTimelineEvent: caseData.timeline.at(-1) ?? null,
-    };
+    return toCaseSummary(caseData);
   }
 
   @Tool({
@@ -121,6 +108,7 @@ export class InsurerTools {
         .describe('Required when action is partial — amount the insurer will cover'),
     }),
   })
+  @Widget('decision-receipt')
   async submitDecision(
     input: { caseId: string; action: string; note?: string; approvedAmount?: number },
     ctx: ExecutionContext,

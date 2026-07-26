@@ -1,4 +1,4 @@
-import { ToolDecorator as Tool, Injectable, ExecutionContext, z } from '@nitrostack/core';
+import { ToolDecorator as Tool, Widget, Injectable, ExecutionContext, z } from '@nitrostack/core';
 import { HospitalDataService } from '../hospital/hospital.data.service.js';
 import { InsurerDataService } from '../insurer/insurer.data.service.js';
 
@@ -25,6 +25,7 @@ export class ObjectivityTools {
       hospitalBilledAmount: z.number().describe('What the hospital is actually billing')
     })
   })
+  @Widget('objectivity-report')
   async buildObjectiveCaseReport(
     input: { patientId: string; procedureCode: string; city: string; hospitalBilledAmount: number },
     ctx: ExecutionContext

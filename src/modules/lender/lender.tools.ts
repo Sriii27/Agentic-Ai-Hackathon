@@ -1,4 +1,4 @@
-import { ToolDecorator as Tool, Injectable, ExecutionContext, z } from '@nitrostack/core';
+import { ToolDecorator as Tool, Widget, Injectable, ExecutionContext, z } from '@nitrostack/core';
 import { LenderDataService } from './lender.data.service.js';
 
 @Injectable({ deps: [LenderDataService] })
@@ -10,6 +10,7 @@ export class LenderTools {
     description: 'Get all loan offers with a transparent true-cost comparison (not just flat rate)',
     inputSchema: z.object({})
   })
+  @Widget('loan-offers')
   async getLoanOffers(_input: Record<string, never>, ctx: ExecutionContext) {
     ctx.logger.info('Fetching loan offers with true-cost comparison');
     const offers = this.lenderData.getAllOffers();

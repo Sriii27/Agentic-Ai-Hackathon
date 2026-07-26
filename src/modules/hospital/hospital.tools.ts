@@ -1,4 +1,4 @@
-import { ToolDecorator as Tool, Injectable, ExecutionContext, z } from '@nitrostack/core';
+import { ToolDecorator as Tool, Widget, Injectable, ExecutionContext, z } from '@nitrostack/core';
 import { HospitalDataService } from './hospital.data.service.js';
 
 /**
@@ -21,6 +21,7 @@ export class HospitalTools {
       city: z.string().describe('City where the procedure will be performed')
     })
   })
+  @Widget('treatment-estimate')
   async getTreatmentEstimate(input: { procedureCode: string; city: string }, ctx: ExecutionContext) {
     ctx.logger.info('Fetching treatment estimate', input);
     const estimate = this.hospitalData.getEstimate(input.procedureCode, input.city);
@@ -49,6 +50,7 @@ export class HospitalTools {
       city: z.string().describe('City to look up')
     })
   })
+  @Widget('city-procedures')
   async listCityProcedures(input: { city: string }, ctx: ExecutionContext) {
     ctx.logger.info('Listing procedures for city', input);
     const procedures = this.hospitalData.listProceduresForCity(input.city);

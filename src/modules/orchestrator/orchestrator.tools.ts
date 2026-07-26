@@ -1,7 +1,7 @@
-import { ToolDecorator as Tool, Injectable, ExecutionContext, z } from '@nitrostack/core';
+import { ToolDecorator as Tool, Widget, Injectable, ExecutionContext, z } from '@nitrostack/core';
 import { ObjectivityTools } from '../objectivity/objectivity.tools.js';
 import { LenderDataService } from '../lender/lender.data.service.js';
-import { CaseStoreService } from '../shared/case-store.service.js';
+import { CaseStoreService, toCaseSummary } from '../shared/case-store.service.js';
 
 /**
  * Orchestrator Agent Tools
@@ -36,6 +36,7 @@ export class OrchestratorTools {
       hospitalBilledAmount: z.number(),
     }),
   })
+  @Widget('objectivity-report')
   async reconcileCase(
     input: { patientId: string; procedureCode: string; city: string; hospitalBilledAmount: number },
     ctx: ExecutionContext,
@@ -83,40 +84,11 @@ export class OrchestratorTools {
         .describe('Care Mediator case ID, e.g. "clean-case", "gotcha-case", or a CM-xxxxx ID'),
     }),
   })
+  @Widget('case-summary')
   async reconcileCaseById(input: { caseId: string }, ctx: ExecutionContext) {
     ctx.logger.info('Reconciling live case by ID', input);
-
     const c = await this.caseStore.getCase(input.caseId);
-
-    return {
-      caseId: c.caseId,
-      patientName: c.patientName,
-      hospitalName: c.hospitalName,
-      procedure: c.procedure,
-      submittedAt: c.submittedAt,
-      claimStatus: c.claimStatus,
-      denialReason: c.denialReason ?? null,
-
-      // Financial summary
-      hospitalEstimate: c.hospitalEstimate,
-      insurerApproved: c.insurerApproved,
-      coverageGap: c.gap,
-      financingNeeded: c.gap > 0,
-      recommendedLoan: c.gap > 0 ? c.recommendedOffer : null,
-      loanOffers: c.gap > 0 ? c.loanOffers : [],
-
-      // Objectivity
-      isConsistent: c.objectivityReport.flags.length === 0,
-      objectivitySummary: c.objectivityReport.summary,
-      flags: c.objectivityReport.flags,
-
-      // Coverage
-      coverageExplainer: c.coverageExplainer,
-
-      // Timeline (most recent 5 events for brevity)
-      recentTimeline: c.timeline.slice(-5),
-      timelineLength: c.timeline.length,
-    };
+    return toCaseSummary(c);
   }
 
   @Tool({
@@ -126,6 +98,7 @@ export class OrchestratorTools {
       'Returns a summary of each case: caseId, patient, hospital, procedure, status, and gap.',
     inputSchema: z.object({}),
   })
+  @Widget('case-queue')
   async listCases(_input: Record<string, never>, ctx: ExecutionContext) {
     ctx.logger.info('Listing all live cases from backend');
     const cases = await this.caseStore.listCases();

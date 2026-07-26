@@ -4,10 +4,13 @@ import { useTheme, useWidgetSDK } from '@nitrostack/widgets';
 
 /**
  * Loan Offers Widget
- * Bound to: get_loan_offers, reconcile_case (financingOptions field)
+ * Bound to: get_loan_offers
  *
  * Shows financing offers sorted by true effective annual rate.
  * Flags predatory offers prominently so the patient isn't misled.
+ * Also renders reconcile_case's `financingOptions` field if ever passed
+ * directly — the data normalisation below accepts both shapes — but that
+ * tool's primary widget is objectivity-report.
  */
 
 interface LoanOffer {

@@ -44,6 +44,61 @@ export interface LiveCaseData {
   timeline: Array<{ timestamp: string; actor: string; event: string }>;
 }
 
+/**
+ * The shared "reconciled case" shape returned by every tool that surfaces a
+ * full case view (`reconcile_case_by_id`, `get_live_case_status`). Both tools
+ * are bound to the `case-summary` widget, so they must agree on field names —
+ * `toCaseSummary` is the single place that builds this shape from raw
+ * backend data, so the two tools can't drift apart.
+ */
+export interface CaseSummaryPayload {
+  caseId: string;
+  patientName: string;
+  hospitalName: string;
+  procedure: string;
+  claimStatus: LiveCaseData['claimStatus'];
+  denialReason: string | null;
+  hospitalEstimate: number;
+  insurerApproved: number;
+  coverageGap: number;
+  financingNeeded: boolean;
+  recommendedLoan: LiveCaseData['recommendedOffer'] | null;
+  loanOffers: LiveCaseData['loanOffers'];
+  isConsistent: boolean;
+  objectivitySummary: string;
+  flags: string[];
+  coverageExplainer: LiveCaseData['coverageExplainer'];
+  latestTimelineEvent: LiveCaseData['timeline'][number] | null;
+  recentTimeline: LiveCaseData['timeline'];
+  timelineLength: number;
+  submittedAt: string;
+}
+
+export function toCaseSummary(c: LiveCaseData): CaseSummaryPayload {
+  return {
+    caseId: c.caseId,
+    patientName: c.patientName,
+    hospitalName: c.hospitalName,
+    procedure: c.procedure,
+    claimStatus: c.claimStatus,
+    denialReason: c.denialReason ?? null,
+    hospitalEstimate: c.hospitalEstimate,
+    insurerApproved: c.insurerApproved,
+    coverageGap: c.gap,
+    financingNeeded: c.gap > 0,
+    recommendedLoan: c.gap > 0 ? c.recommendedOffer : null,
+    loanOffers: c.gap > 0 ? c.loanOffers : [],
+    isConsistent: c.objectivityReport.flags.length === 0,
+    objectivitySummary: c.objectivityReport.summary,
+    flags: c.objectivityReport.flags,
+    coverageExplainer: c.coverageExplainer,
+    latestTimelineEvent: c.timeline.at(-1) ?? null,
+    recentTimeline: c.timeline.slice(-5),
+    timelineLength: c.timeline.length,
+    submittedAt: c.submittedAt,
+  };
+}
+
 export type DecisionAction = 'approve' | 'partial' | 'deny' | 'more-info';
 
 export interface SubmitDecisionInput {
