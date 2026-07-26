@@ -35,6 +35,11 @@ export class OrchestratorTools {
       city: z.string(),
       hospitalBilledAmount: z.number(),
     }),
+    // Optional task support: a client may run this as a tracked task to get
+    // progress updates across the three real stages below (objectivity check,
+    // gap computation, financing lookup). A plain synchronous call still
+    // works unchanged — ctx.task is only populated for task-augmented calls.
+    taskSupport: 'optional',
   })
   @Widget('objectivity-report')
   async reconcileCase(
@@ -43,13 +48,19 @@ export class OrchestratorTools {
   ) {
     ctx.logger.info('Reconciling case from raw inputs', input);
 
+    ctx.task?.updateProgress('Checking hospital estimate against CGHS rates and insurer claim…');
+    ctx.task?.throwIfCancelled();
     const report = await this.objectivity.buildObjectiveCaseReport(input, ctx);
 
+    ctx.task?.updateProgress('Computing coverage gap…');
+    ctx.task?.throwIfCancelled();
     const approvedAmount = report.insurerClaim?.approvedAmount ?? 0;
     const gap = Math.max(0, input.hospitalBilledAmount - approvedAmount);
 
     let financingOptions: unknown = null;
     if (gap > 0) {
+      ctx.task?.updateProgress('Gap found — looking up financing offers…');
+      ctx.task?.throwIfCancelled();
       const offers = this.lenderData.getAllOffers();
       financingOptions = [...offers]
         .sort((a, b) => a.effectiveAnnualRate - b.effectiveAnnualRate)
